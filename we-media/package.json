@@ -1,0 +1,26 @@
+{
+  "name": "we-media",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview --port 4173"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.0.10",
+    "axios": "^1.1.3",
+    "element-plus": "^2.2.21",
+    "less": "^4.1.3",
+    "normalize.css": "^8.0.1",
+    "unplugin-icons": "^0.14.13",
+    "vite-plugin-inspect": "^0.7.8",
+    "vue": "^3.2.38",
+    "vue-router": "^4.1.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^3.0.3",
+    "unplugin-auto-import": "^0.11.4",
+    "unplugin-vue-components": "^0.22.9",
+    "vite": "^3.0.9"
+  }
+}
