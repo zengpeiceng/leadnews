@@ -1,5 +1,7 @@
 <template>
-  <router-view></router-view>
+  <MainFrameVue>
+    
+  </MainFrameVue>
 </template>
 
 <script setup>

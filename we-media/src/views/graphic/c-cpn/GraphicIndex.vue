@@ -1,5 +1,11 @@
 <template>
-  <router-view></router-view>
+  <MainFrameVue>
+    <template #header>
+      <div>
+        header
+      </div>
+    </template>
+  </MainFrameVue>
 </template>
 
 <script setup>
