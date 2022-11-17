@@ -2,8 +2,8 @@ const Router = require("koa-router");
 
 const { verifyLogin } = require("../middleware/auth.middleware");
 const { login } = require("../controller/auth.controller");
-const authRouter = new Router({ prefix: "/login" });
+const authRouter = new Router({ prefix: "/wemedia" });
 
-authRouter.post("/", verifyLogin, login);
+authRouter.post("/login", verifyLogin, login);
 
 module.exports = authRouter;

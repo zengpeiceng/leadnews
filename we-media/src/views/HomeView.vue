@@ -66,7 +66,7 @@
         <div class="login-out">
           <img src="@/assets/img/home/avatar.png" alt="" />
           <span>admin</span> |
-          <svg t="1668674418885" viewBox="0 0 1097 1024" width="18" height="18">
+            <svg t="1668674418885" viewBox="0 0 1097 1024" width="18" height="18" @click="loginOut">
             <path
               d="M24.380952 0h975.238096a24.380952 24.380952 0 0 1 0 48.761905H24.380952a24.380952 24.380952 0 0 1 0-48.761905z m0 975.238095h975.238096a24.380952 24.380952 0 0 1 0 48.761905H24.380952a24.380952 24.380952 0 0 1 0-48.761905zM24.380952 0a24.380952 24.380952 0 0 1 24.380953 24.380952v975.238096a24.380952 24.380952 0 0 1-48.761905 0V24.380952a24.380952 24.380952 0 0 1 24.380952-24.380952z m975.238096 0a24.380952 24.380952 0 0 1 24.380952 24.380952v146.285715a24.380952 24.380952 0 0 1-48.761905 0V24.380952a24.380952 24.380952 0 0 1 24.380953-24.380952z m0 828.952381a24.380952 24.380952 0 0 1 24.380952 24.380952v146.285715a24.380952 24.380952 0 0 1-48.761905 0v-146.285715a24.380952 24.380952 0 0 1 24.380953-24.380952zM811.52 226.377143a23.381333 23.381333 0 0 1 33.084952 0l245.589334 245.589333a23.405714 23.405714 0 0 1-33.084953 33.084953L811.52 259.462095a23.381333 23.381333 0 0 1 0-33.084952z m-24.380952 546.864762a23.381333 23.381333 0 0 0 33.084952 0l269.970286-269.970286a23.405714 23.405714 0 0 0-33.084953-33.084952L787.139048 740.156952a23.381333 23.381333 0 0 0 0 33.084953zM487.619048 463.238095h585.142857a24.380952 24.380952 0 0 1 0 48.761905H487.619048a24.380952 24.380952 0 0 1 0-48.761905z"
               fill="#515151"
@@ -82,21 +82,34 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import { useRoute } from "vue-router";
+import { computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { removeItem } from "../hook/localStorage";
 import MainFrameVue from "../components/MainFrame.vue";
 
 const route = useRoute();
+const router = useRouter();
 const activeRoute = computed(() => {
   if (route.meta.activeMenu) return route.meta.activeMenu;
   return route.path;
 });
-onBeforeMount(() => {});
+
+const loginOut = () => {
+  removeItem('token');
+  router.push("/login");
+}
 </script>
 
 <style lang="less" scoped>
 #home {
   position: relative;
+
+  background-image: url("@/assets/img/home/img_heima_bg@2x.393931b.png"),
+    url("@/assets/img/home/img_bj_zuoxia@2x.6f2935e.png");
+  background-size: 268px 182px, 305px 229px;
+  background-position: 0 0, 107px 100%;
+  background-attachment: fixed;
+  background-repeat: no-repeat, no-repeat;
   padding: 40px 40px 40px 0;
   margin: 0 auto;
   min-height: 100vh;
@@ -159,11 +172,9 @@ onBeforeMount(() => {});
   }
   .right-content {
     margin-left: 240px;
-    padding: 0 30px 30px 30px;
     background-color: #fff;
     border-radius: 15px;
     box-shadow: 0 0 30px 30px rgb(30 30 50 / 5%);
-    min-height: 500px;
     overflow: auto;
   }
 }

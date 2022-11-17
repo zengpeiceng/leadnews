@@ -1,25 +1,33 @@
 import axios from "axios";
-
+import { getItem } from "@/hook/localStorage";
 const instance = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: "http://localhost:8000/wemedia",
+  headers: {
+    "Content-Type": "application/json;charset=UTF-8",
+  },
   timeout: 5000,
-  headers: { "Content-Type": "application/json" },
 });
 
-instance.interceptors.request.use((config) => {
+instance.interceptors.request.use(
+  (config) => {
+    const token = getItem("token")
+    if(token) {
+      config.headers.token = token;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-  return config;
+instance.interceptors.response.use(
+  (response) => {
+    return response.data;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-}, error => {
-  return Promise.reject(error);
-})
-
-instance.interceptors.response.use((response) => {
-
-  return response;
-
-}, error => {
-  return Promise.reject(error);
-})
-
-export default instance
+export default instance;

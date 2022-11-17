@@ -7,6 +7,7 @@ const md5Password = require("../utils/password-handle");
 // 登录验证接口
 const verifyLogin = async (ctx, next) => {
   const { name, password } = ctx.request.body;
+  console.log(name,password);
   // 用户名或密码是否为空
   if (!name || !password || name === "" || password === "") {
     const error = new Error(errorTypes.NAME_OR_PASSWORD_IS_REQUIRED);

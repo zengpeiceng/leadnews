@@ -10,6 +10,7 @@ const errorHandler = (error, ctx) => {
     case errorType.NAME_OR_PASSWORD_IS_INCORRECT:
       code = 400;
       message = '用户名或密码错误';
+      break;
     case errorType.USER_ALREADY_EXISTS:
       code = 409;
       message = '用户已存在';

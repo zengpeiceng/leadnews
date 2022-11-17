@@ -1,12 +1,13 @@
 const Koa = require('koa');
-
+const cors = require('@koa/cors');
 const bodyParser = require('koa-bodyparser');
 
 const errorHandle = require('./error-handle');
 const useRoutes = require('../router');
 
 const app = new Koa();
-
+// 解决跨域
+app.use(cors());
 app.useRoutes = useRoutes;
 
 // 解析json数据格式的数据

@@ -1,11 +1,8 @@
 <template>
-  <MainFrameVue>
-    
-  </MainFrameVue>
+  <router-view></router-view>
 </template>
 
 <script setup>
-import MainFrameVue from '@/components/MainFrame.vue';
 </script>
 
 <style lang="less" scoped>
