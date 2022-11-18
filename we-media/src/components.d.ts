@@ -8,6 +8,7 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElCard: typeof import('element-plus/es')['ElCard']
     ElCheckbox: typeof import('element-plus/es')['ElCheckbox']
     ElCheckBox: typeof import('element-plus/es')['ElCheckBox']
     ElForm: typeof import('element-plus/es')['ElForm']
@@ -18,10 +19,17 @@ declare module '@vue/runtime-core' {
     ElInput: typeof import('element-plus/es')['ElInput']
     ElMenu: typeof import('element-plus/es')['ElMenu']
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
+    ElPageHeader: typeof import('element-plus/es')['ElPageHeader']
+    ElPagination: typeof import('element-plus/es')['ElPagination']
+    ElSwitch: typeof import('element-plus/es')['ElSwitch']
+    HyPagenation: typeof import('./components/HyPagenation.vue')['default']
     IEpEdit: typeof import('~icons/ep/edit')['default']
     IEpIcon: typeof import('~icons/ep/icon')['default']
     IEpMenu: typeof import('~icons/ep/menu')['default']
+    IEpUpload: typeof import('~icons/ep/upload')['default']
     MainFrame: typeof import('./components/MainFrame.vue')['default']
+    PageBox: typeof import('./components/PageBox.vue')['default']
+    Pagenation: typeof import('./components/pagenation.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
   }

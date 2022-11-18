@@ -1,11 +1,11 @@
 <template>
-  <header>
+  <header class="header">
     <slot name="header"></slot>
   </header>
-  <main>
+  <main class="main">
     <slot name="main"></slot>
   </main>
-  <footer>
+  <footer class="footer">
     <slot name="footer"></slot>
   </footer>
 </template>
