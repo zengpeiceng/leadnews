@@ -1,6 +1,5 @@
 export default function(res, callback) {
-  console.log(res);
-  if(res.code === 200) {
+  if(res?.code === 200) {
     ElMessage({
       type: "success",
       message: res.message

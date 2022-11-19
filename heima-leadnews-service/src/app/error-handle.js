@@ -23,6 +23,10 @@ const errorHandler = (error, ctx) => {
       code = 401;
       message = '无效的token，请重新登录';
       break;
+    case errorType.UNPERMISSION:
+      code = 401;
+      message = '您没有操作的权限';
+      break;
     default:
       code = 404;
       message = 'NOT FOUND';

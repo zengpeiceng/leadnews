@@ -17,8 +17,8 @@ const emit = defineEmits(["pageChange"]);
 const props = defineProps({
   total: Number,
 });
-const currentPage = ref(1);
-const pageSize = ref(10);
+let currentPage = ref(1);
+let pageSize = ref(10);
 
 const handleSizeChange = (val) => {
   pageSize.value = val;
