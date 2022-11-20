@@ -9,15 +9,15 @@ export default [
       {
         path: "/graphic",
         redirect: "/graphic/index",
-        component: () => import("@/views/graphic/GraphicView.vue"),
+        component: () => import("/src/views/graphic/GraphicView.vue"),
         children: [
           {
             path: "/graphic/index",
-            component: () => import("@/views/graphic/c-cpn/GraphicIndex.vue")
+            component: () => import("/src//views/graphic/c-cpn/GraphicIndex.vue")
           },
           {
             path: "/graphic/detail",
-            component: () => import("@/views/graphic/c-cpn/GraphicDetail.vue"),
+            component: () => import("/src/views/graphic/c-cpn/GraphicDetail.vue"),
             meta: {
               ativeMenu: "/graphic/index"
             }
@@ -27,24 +27,24 @@ export default [
       },
       {
         path: "/article",
-        component: () => import("@/views/article/ArticleView.vue")
+        component: () => import("/src/views/article/ArticleView.vue")
       },
       {
         path: "/contentlist",
-        component: () => import("@/views/contentlist/ContentList.vue"),
+        component: () => import("/src/views/contentlist/ContentList.vue"),
       },
       {
         path: "/material",
-        component: () => import("@/views/material/MaterialView.vue")
+        component: () => import("/src/views/material/MaterialView.vue")
       },
       {
         path: "/fans",
-        component: () => import("@/views/fans/FansView.vue")
+        component: () => import("/src/views/fans/FansView.vue")
       }
     ]
   },
   {
       path: "/login",
-      component: () => import("@/views/login/Login.vue")
+      component: () => import("/src/views/login/Login.vue")
   }
 ]

@@ -6,6 +6,7 @@ class ArticleController {
     ctx.body = {
       host: null,
       code: 200,
+      data: "SUCCESS",
       message: "操作成功"
     }
   }

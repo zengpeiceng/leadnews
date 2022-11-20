@@ -47,9 +47,9 @@
 <script setup>
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import { Login } from "@/api/login.js";
-import toolTips from "@/hook/toolTips.js";
-import { setItem } from "@/hook/localStorage.js";
+import { Login } from "/src/api/login.js";
+import toolTips from "/src/hook/toolTips.js";
+import { setItem } from "/src/hook/localStorage.js";
 
 const router = useRouter();
 

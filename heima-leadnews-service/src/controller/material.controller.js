@@ -5,13 +5,20 @@ const fileService = require("../service/material.services.js");
 const { APP_HOST, APP_PORT } = require("../app/config");
 const { MATERIAL_PATH } = require("../constants/file-path");
 class MaterialController {
+  // 上传素材
   async saveMaterial(ctx, next) {
     const { filename } = ctx.file;
     const userId = ctx.user.id;
+    // 数据库中插入素材，返回插入对象包括插入的id
     const result = await fileService.createMaterial(userId, filename);
+    // 根据插入的id返回素材信息
+    const data = await fileService.querySingleMaterial(result.insertId)
+    // 处理图片地址
+    data[0].url = `http://${APP_HOST}:${APP_PORT}/material/${data[0].url}`
     ctx.body = {
       host: null,
       code: 200,
+      data: data[0],
       message: "上传成功！",
     };
   }
@@ -61,6 +68,7 @@ class MaterialController {
       data: "SUCCESS"
     }
   }
+
 
   async getMaterialImage(ctx, next) {
     const { filename } = ctx.params;

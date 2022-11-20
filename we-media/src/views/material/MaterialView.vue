@@ -11,7 +11,7 @@
           inactive-text="全部"
         />
         <div>
-          <span>已上传{{total}}张图片</span>
+          <span>已上传{{ total }}张图片</span>
           <el-button type="primary" @click="dialogVisible = true">
             <el-icon><i-ep-Upload /></el-icon>
             上传图片
@@ -84,7 +84,11 @@
       </div>
     </template>
     <template #footer>
-      <PageBox v-if="total > 0" :total="total" @pageChange="handlePagenation"></PageBox>
+      <PageBox
+        v-if="total > 0"
+        :total="total"
+        @pageChange="handlePagenation"
+      ></PageBox>
     </template>
   </MainFrameVue>
 </template>
@@ -92,16 +96,16 @@
 <script setup>
 import { ref, onBeforeMount, watch } from "vue";
 import { genFileId } from "element-plus";
-import MainFrameVue from "@/components/MainFrame.vue";
-import PageBox from "@/components/PageBox.vue";
+import MainFrameVue from "/src/components/MainFrame.vue";
+import PageBox from "/src/components/PageBox.vue";
 import {
   materialList,
   collectMaterial,
   cancelCollect,
   deleteMaterial,
   uploadMetarial,
-} from "@/api/material.js";
-import toolTips from "@/hook/toolTips.js";
+} from "/src/api/material.js";
+import toolTips from "/src/hook/toolTips.js";
 // 收藏(true) / 全部(false)
 let isCollection = ref(false);
 
@@ -112,7 +116,6 @@ let materialAll = ref([]);
 
 let dialogVisible = ref(false);
 let upload = ref();
-let fileList = ref([]);
 const materialCollecton = ref([]);
 
 watch(isCollection, () => {
@@ -167,7 +170,7 @@ const updateMaterial = async (data) => {
   } else {
     materialAll.value = result.data;
   }
-  total.value = result.total
+  total.value = result.total;
 };
 // 收藏素材
 const toCollect = async (id) => {
@@ -194,7 +197,7 @@ const toCancelCollect = async (id) => {
 // 删除素材
 const toDelete = async (id) => {
   const result = await deleteMaterial(id);
-  toolTips(result, () => {
+  toolTips(result, () => {  
     updateMaterial({
       isCollection: isCollection.value,
       page: page.value,
@@ -212,7 +215,7 @@ const handlePagenation = async (data) => {
 onBeforeMount(async () => {
   const result = await materialList({ page: 1, size: 10 });
   materialAll.value = result.data;
-  total.value = result.total
+  total.value = result.total;
 });
 </script>
 
@@ -229,37 +232,10 @@ onBeforeMount(async () => {
     font-size: 14px;
   }
   :deep(.el-switch) {
-    .is-active span {
-      color: #000;
-      font-weight: 600;
-    }
-    .el-switch__core {
-      height: 40px;
-      border-radius: 4px;
-      .el-switch__action {
-        height: 32px;
-        border-radius: 4px;
-        width: 63px;
-        left: 2px;
-        top: 3px;
-      }
-    }
-    .el-switch__label {
-      transition: 0.2s;
-      display: inline-block;
-      position: absolute;
-      text-align: center;
+    .el-switch__action {
       width: 63px;
-      height: 32px;
-      line-height: 32px;
-      color: #444;
-      z-index: 9;
-    }
-    .el-switch__label--left {
-      left: 3px;
-    }
-    .el-switch__label--right {
-      right: 3px;
+      left: 2px;
+      top: 3px;
     }
   }
   :deep(.is-checked) {
@@ -283,34 +259,5 @@ onBeforeMount(async () => {
   display: flex;
   flex-wrap: wrap;
   justify-content: left;
-
-  .el-card {
-    width: 184px;
-    height: 184px;
-    border: none;
-    margin: 30px 30px 0 0;
-    :deep(.el-card__body) {
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      .all {
-        width: 100%;
-        height: 124px;
-      }
-      .collection {
-        width: 100%;
-        height: 100%;
-      }
-    }
-    .operate {
-      display: flex;
-      justify-content: space-evenly;
-      align-items: center;
-      height: 57px;
-      span {
-        padding: 0 10px;
-      }
-    }
-  }
 }
 </style>

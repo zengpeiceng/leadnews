@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-import MainFrameVue from '@/components/MainFrame.vue';
+import MainFrameVue from '/src/components/MainFrame.vue';
 </script>
 
 <style lang="less" scoped>

@@ -12,10 +12,10 @@ class FileService {
   async getMaterials(isCollection, page, size) {
     let statement, result;
     if(isCollection === 1 || isCollection === true) {
-      statement = `SELECT * FROM material WHERE isCollection = ? limit ?, ?;`
+      statement = `SELECT * FROM material WHERE isCollection = ? ORDER BY id DESC limit ?, ?;`
       result = await connection.execute(statement, [isCollection, (page - 1) * size + '', size + '']);
     }else {
-      statement = `SELECT * FROM material limit ?,?;`;
+      statement = `SELECT * FROM material ORDER BY id DESC limit ?,?;`;
       result = await connection.execute(statement, [(page - 1) * size + '', size + '']);
     }
     return result[0];
@@ -56,6 +56,12 @@ class FileService {
     const statement = `SELECT * FROM material WHERE userId = ? and id = ?`;
     const result = await connection.execute(statement, [uid, mid]);
     return result[0];
+  }
+  // 查询单个素材
+  async querySingleMaterial(id) {
+    const statement = `SELECT * FROM material WHERE id = ?`
+    const result = await connection.execute(statement, [id]);
+    return result[0]
   }
 }
 

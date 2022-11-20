@@ -175,7 +175,6 @@ const loginOut = () => {
     background-color: #fff;
     border-radius: 15px;
     box-shadow: 0 0 30px 30px rgb(30 30 50 / 5%);
-    overflow: auto;
   }
 }
 </style>

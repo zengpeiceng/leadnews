@@ -18,3 +18,67 @@
   height: 178px;
   text-align: center;
 }
+
+.el-switch {
+  .is-active span {
+    color: #000;
+    font-weight: 600;
+  }
+  .el-switch__core {
+    height: 40px;
+    border-radius: 4px;
+    .el-switch__action {
+      height: 32px;
+      border-radius: 4px;
+      width: 63px;
+      left: 2px;
+      top: 3px;
+    }
+  }
+  .el-switch__label {
+    transition: 0.2s;
+    display: inline-block;
+    position: absolute;
+    text-align: center;
+    width: 63px;
+    height: 32px;
+    line-height: 32px;
+    color: #444;
+    z-index: 9;
+  }
+  .el-switch__label--left {
+    left: 3px;
+  }
+  .el-switch__label--right {
+    right: 3px;
+  }
+}
+
+.el-card {
+  width: 184px;
+  height: 184px;
+  border: none;
+  margin: 30px 30px 0 0;
+  .el-card__body {
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    .all {
+      width: 100%;
+      height: 124px;
+    }
+    .collection {
+      width: 100%;
+      height: 100%;
+    }
+    .operate {
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      height: 57px;
+      span {
+        padding: 0 10px;
+      }
+    }
+  }
+}
