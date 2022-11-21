@@ -1,4 +1,4 @@
-import request from "@/utils/request.js"
+import request from "/src/utils/request.js"
 
 export function Login(data) {
   return request({

@@ -24,13 +24,13 @@
               v-for="(item, index) in materialAll"
               :key="item.id"
               class="collection"
-              @click="selectMaterial(index)"
+              @click="selectMaterial(item)"
             >
               <img :src="item.url" alt="" class="collection" />
               <img
                 ref="radioIcon"
                 class="radioIcon"
-                :src="getCardIcon(index)"
+                :src="getCardIcon(item.id)"
                 alt=""
               />
             </el-card>
@@ -40,13 +40,13 @@
               shadow="always"
               v-for="(item, index) in materialCollecton"
               :key="item.id"
-              class="collection" @click="selectMaterial(index)"
+              class="collection" @click="selectMaterial(item)"
             >
               <img :src="item.url" alt="" class="collection" />
               <img
                 ref="radioIcon"
                 class="radioIcon"
-                :src="getCardIcon(index)"
+                :src="getCardIcon(item.id)"
                 alt=""
               />
             </el-card>
@@ -97,18 +97,19 @@
 import { ref, onBeforeMount } from "vue";
 import PageBox from "/src/components/PageBox.vue";
 import { materialList, uploadMetarial } from "/src/api/material.js";
+import toolTips from "/src/hook/toolTips.js"
 const emit = defineEmits(["closeDialog", "submit"]);
 
 const dialog = ref(); // 对话框ref对象
 const upload = ref(); // 文件上传
-const radioIcon = ref();
 
 let showDialog = ref(true); // 对话框显示与隐藏
 let isLocall = ref(false); // 素材(true)/本地(false)
 let isCollection = ref(0); // 全部(0) / 收藏(1)
 let materialAll = ref([]); // 全部素材列表
 let materialCollecton = ref([]); // 收藏素材列表
-let currSelected = ref(0); // 当前被选中的素材
+let currSelected = ref(0); // 当前被选中的素材id
+let currSelectedUrl = ref("");
 
 let total = ref(0); // 页码total
 let page = ref(1); // 当前页
@@ -159,25 +160,28 @@ const handleExceed = (files) => {
   upload.value.handleStart(file);
 };
 const uploadMaterialFunc = async(rawFile) => {
+  console.log('rawFile');
   const formData = new FormData();
   formData.append("material", rawFile.file);
   const result = await uploadMetarial(formData);
   toolTips(result, () => {
-    updateMaterial({
+    materialList({
       isCollection: isCollection.value,
       page: page.value,
       size: size.value,
     });
   });
+  currSelectedUrl.value = result.data.url;
 };
-const getCardIcon = (index) => {
-  if (index != currSelected.value) {
+const getCardIcon = (id) => {
+  if (id != currSelected.value) {
     return "/src/assets/img/icons/unselect.png";
   }
   return "/src/assets/img/icons/selected.png";
 };
-const selectMaterial = (index) => {
-  currSelected.value = index
+const selectMaterial = (item) => {
+  currSelected.value = item.id
+  currSelectedUrl.value = item.url
 };
 // 页码变化
 const handlePagenation = async (data) => {
@@ -197,9 +201,10 @@ const handlePagenation = async (data) => {
 // 取消，确定
 const handleClose = (operate) => {
   if (operate === "cancel") {
+    currSelectedUrl.value = "";
     emit("closeDialog");
   } else {
-    emit("submit");
+    emit("submit", currSelectedUrl.value);
   }
 };
 

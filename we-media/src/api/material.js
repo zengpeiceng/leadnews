@@ -1,4 +1,4 @@
-import request from "@/utils/request.js";
+import request from "/src/utils/request.js";
 // 获取素材
 export function materialList(data) {
   return request({

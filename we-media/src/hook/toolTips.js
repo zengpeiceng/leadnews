@@ -4,7 +4,8 @@ export default function(res, callback) {
       type: "success",
       message: res.message
     })
-    callback();
+    if(callback)
+      callback();
   }else {
     ElMessage({
       type: "error",

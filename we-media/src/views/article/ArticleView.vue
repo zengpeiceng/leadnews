@@ -140,11 +140,16 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onBeforeMount } from "vue";
 import MainFrameVue from "/src/components/MainFrame.vue";
 import DialogBox from "./c-cpn/DialogBox.vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
-let channels = ref([]);
+import { getChannels } from "/src/api/channel.js";
+import { publishArticle } from "/src/api/article.js";
+import toolTips from "/src/hook/toolTips.js";
+
+let channels = ref([]);   // 频道列表
+
 let pickerOptions = ref({
   // 只能选今天及以后
   disabledDate(time) {
@@ -182,6 +187,7 @@ let formData = ref({
   images: [], // 封面
   status: 1,
 });
+
 let editor = ref(null);
 let toolbarConfig = ref({
   excludeKeys: ["group-video", "fullScreen", "group-image", "insertLink"],
@@ -200,19 +206,34 @@ let editorConfig = ref({
     },
   },
 });
-let showDialog = ref(false);
 
+let showDialog = ref(false); // 是否显示对话框 
+let currCover = ref(0); // 当前的封面
+
+// 初始化editor
 const onCreated = (e) => {
   editor.value = Object.seal(e);
 };
-const setimages = () => {
+// 设置封面值
+const setimages = (url) => {
   showDialog.value = false;
+  formData.value.images[currCover.value - 1] = url;
 };
-
+// 选择当前设置封面
 const selectCover = (i) => {
   showDialog.value = true;
+  currCover.value = i;
 };
-const submitForm = () => {};
+// 提交表单
+const submitForm = async (operate) => {
+  const result = await publishArticle(operate, formData.value);
+  toolTips(result);
+};
+// 获取频道列表
+onBeforeMount(async () => {
+  const result = await getChannels();
+  channels.value = result.data;
+});
 </script>
 
 <style lang="less" scoped>
