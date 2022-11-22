@@ -4,6 +4,7 @@ const mime = require("mime-types");
 const MaterialDao = require("../dao/material.dao");
 const { APP_HOST, APP_PORT } = require("../app/config");
 const { MATERIAL_PATH } = require("../constants/file-path");
+const { success } = require("../app/response");
 class MaterialController {
   // 上传素材
   async saveMaterial(ctx, next) {
@@ -15,12 +16,7 @@ class MaterialController {
     const data = await MaterialDao.querySingleMaterial(id)
     // 处理图片地址
     data.dataValues.url = `http://${APP_HOST}:${APP_PORT}/material/${data.dataValues.url}`
-    ctx.body = {
-      host: null,
-      code: 200,
-      data: data.dataValues,
-      message: "上传成功！",
-    };
+    success(ctx, data.dataValues, "上传成功！", 200, null);
   }
   // 获取素材
   async getMaterials(ctx, next) {
@@ -34,43 +30,28 @@ class MaterialController {
     // 记录条数
     const total = await MaterialDao.getMaterialLength(isCollection)
     // 返回信息
-    ctx.body = {host: null, code: 200, data: result, total: total};
+    success(ctx, result, "SUCCESS", 200, null, total)
   }
 
   // 收藏素材
   async collectMaterial(ctx, next) {
     const { id } = ctx.request.params;
     const result = await MaterialDao.collectMaterial(id);
-    ctx.body = {
-      host: null,
-      code: 200,
-      message: "收藏成功",
-      data: "SUCCESS"
-    }
+    success(ctx, "SUCCESS", "收藏成功", 200, null);
   }
 
   // 取消收藏 
   async cancelCollect(ctx, next) {
     const { id } = ctx.request.params;
     const result = await MaterialDao.cancelCollect(id)
-    ctx.body = {
-      host: null,
-      code: 200,
-      message: "操作成功",
-      data: "SUCCESS"
-    }
+    success(ctx, "SUCCESS", "已取消收藏", 200, null);
   }
 
   // 删除素材
   async deleteMaterial(ctx, next) {
     const { id } = ctx.request.params;
     const result = await MaterialDao.removeMaterial(id);
-    ctx.body = {
-      host: null,
-      code: 200,
-      message: "删除成功",
-      data: "SUCCESS"
-    }
+    success(ctx, "SUCCESS", "删除成功", 200, null);
   }
 
 

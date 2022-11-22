@@ -1,9 +1,10 @@
-function success(ctx, data, message='SUCCESS', code, host = null) {
+function success(ctx, data, message='SUCCESS', code, host = null, total) {
   ctx.body = {
     host,
     code,
     data,
     message,
+    total
   }
 }
 

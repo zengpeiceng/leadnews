@@ -13,10 +13,6 @@ class AuthController {
     delete ctx.user.password;
     success(ctx, {...ctx.user, token}, "登录成功", 200);
   }
-
-  async success(ctx, next) {
-    ctx.body = "授权成功~";
-  }
 }
 
 module.exports = new AuthController();

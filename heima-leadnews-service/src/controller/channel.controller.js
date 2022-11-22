@@ -4,7 +4,6 @@ class ChannelController {
   async getChannel(ctx, next) {
     const result = await ChannelDao.getChannel();
     success(ctx, result, "SUCCESS", 200, null);
-
   }
 }
 
