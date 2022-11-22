@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const mime = require("mime-types");
-const fileService = require("../service/material.services.js");
+const MaterialDao = require("../dao/material.dao");
 const { APP_HOST, APP_PORT } = require("../app/config");
 const { MATERIAL_PATH } = require("../constants/file-path");
 class MaterialController {
@@ -9,34 +9,38 @@ class MaterialController {
   async saveMaterial(ctx, next) {
     const { filename } = ctx.file;
     const userId = ctx.user.id;
-    // 数据库中插入素材，返回插入对象包括插入的id
-    const result = await fileService.createMaterial(userId, filename);
+    // 数据库中插入素材，返回插入对象的id
+    const id = await MaterialDao.saveMaterial(userId, filename);
     // 根据插入的id返回素材信息
-    const data = await fileService.querySingleMaterial(result.insertId)
+    const data = await MaterialDao.querySingleMaterial(id)
     // 处理图片地址
-    data[0].url = `http://${APP_HOST}:${APP_PORT}/material/${data[0].url}`
+    data.dataValues.url = `http://${APP_HOST}:${APP_PORT}/material/${data.dataValues.url}`
     ctx.body = {
       host: null,
       code: 200,
-      data: data[0],
+      data: data.dataValues,
       message: "上传成功！",
     };
   }
   // 获取素材
   async getMaterials(ctx, next) {
     const { isCollection, page, size } = ctx.request.body;
-    const result = await fileService.getMaterials(isCollection, page, size);
+    // 分页查询素材
+    const result = await MaterialDao.getMaterials(isCollection, page, size)
+    // 更改url链接
     for (const iterator of result) {
       iterator.url = `http://${APP_HOST}:${APP_PORT}/material/${iterator.url}`;
     }
-    const total = await fileService.getMaterialLength(isCollection, page, size);
-    ctx.body = {host: null, code: 200, data: result, total: total.length};
+    // 记录条数
+    const total = await MaterialDao.getMaterialLength(isCollection)
+    // 返回信息
+    ctx.body = {host: null, code: 200, data: result, total: total};
   }
 
   // 收藏素材
   async collectMaterial(ctx, next) {
     const { id } = ctx.request.params;
-    const result = await fileService.collectMaterial(id);
+    const result = await MaterialDao.collectMaterial(id);
     ctx.body = {
       host: null,
       code: 200,
@@ -48,7 +52,7 @@ class MaterialController {
   // 取消收藏 
   async cancelCollect(ctx, next) {
     const { id } = ctx.request.params;
-    const result = await fileService.cancelCollect(id);
+    const result = await MaterialDao.cancelCollect(id)
     ctx.body = {
       host: null,
       code: 200,
@@ -60,7 +64,7 @@ class MaterialController {
   // 删除素材
   async deleteMaterial(ctx, next) {
     const { id } = ctx.request.params;
-    const result = await fileService.removeMaterial(id);
+    const result = await MaterialDao.removeMaterial(id);
     ctx.body = {
       host: null,
       code: 200,

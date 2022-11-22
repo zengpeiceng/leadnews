@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { PRIVATE_KEY, PUBLIC_KEY } = require("../app/config");
+const { success } = require("../app/response");
 
 class AuthController {
   async login(ctx, next) {
@@ -8,17 +9,13 @@ class AuthController {
       expiresIn: 60 * 60 * 24,
       algorithm: "RS256",
     });
-    ctx.user.password = ""
-    ctx.body = {
-      host: null,
-      code: 200,
-      message: "登录成功",
-      data: { ...ctx.user, token }
-    };
+    ctx.user.password = "";
+    delete ctx.user.password;
+    success(ctx, {...ctx.user, token}, "登录成功", 200);
   }
 
   async success(ctx, next) {
-    ctx.body = '授权成功~';
+    ctx.body = "授权成功~";
   }
 }
 

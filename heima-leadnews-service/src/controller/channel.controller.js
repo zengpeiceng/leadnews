@@ -1,14 +1,10 @@
-const ChannelService = require('../service/channel.services');
+const ChannelDao = require("../dao/channel.dao");
+const {success} = require("../app/response");
 class ChannelController {
   async getChannel(ctx, next) {
-    console.log('getChannel');
-    const result = await ChannelService.getChannel();
-    console.log(result);
-    ctx.body = {
-      code: 200,
-      message: '获取成功',
-      data: result
-    }
+    const result = await ChannelDao.getChannel();
+    success(ctx, result, "SUCCESS", 200, null);
+
   }
 }
 

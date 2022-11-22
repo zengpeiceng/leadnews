@@ -1,8 +1,8 @@
 const errorType = require('../constants/error-types');
-
-const errorHandler = (error, ctx) => {
-  let code, message;code
-  switch(error.message) {
+const { error } = require("../app/response");
+const errorHandler = (err, ctx) => {
+  let code, message;
+  switch(err.message) {
     case errorType.NAME_OR_PASSWORD_IS_REQUIRED:
       code = 400;
       message = '用户名或密码不能为空';
@@ -31,9 +31,7 @@ const errorHandler = (error, ctx) => {
       code = 404;
       message = 'NOT FOUND';
   }
-  ctx.body = {
-    code, message
-  }
+  error(ctx, message, code);
 }
 
 module.exports = errorHandler;

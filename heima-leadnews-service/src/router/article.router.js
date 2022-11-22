@@ -7,6 +7,6 @@ const { submitArticle, getArticles } = require("../controller/article.controller
 // 发表文章
 articleRouter.post("wemedia/article/submit", verifyAuth, submitArticle);
 // 获取内容列表
-articleRouter.get("wemedia/article/list", verifyAuth, getArticles);
+articleRouter.post("wemedia/article/list", verifyAuth, getArticles);
 
 module.exports = articleRouter;

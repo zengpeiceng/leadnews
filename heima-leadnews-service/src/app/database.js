@@ -1,5 +1,4 @@
 const mysql = require("mysql2/promise");
-
 const config = require("./config");
 
 const connection = mysql.createPool({
@@ -21,17 +20,4 @@ connection.getConnection((err, conn) => {
   });
 });
 
-// connection.query(sql, (err, results, fields) => {
-//   console.log(results);
-//   console.log(fields);
-// })
-
-// function query(sql, callback) {
-//   connection.getConnection(function (err, conn) {
-//     conn.query(sql, function (err, results, fields) {
-//       callback(err, results, fields);
-//       connection.release(); // 中断连接
-//     });
-//   });
-// }
 module.exports = connection;

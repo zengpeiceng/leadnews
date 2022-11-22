@@ -1,6 +1,6 @@
 const fs = require('fs');
 const connection = require('../app/database');
-
+const UserDao = require("../dao/user.dao");
 const userService = require('../service/user.services');
 
 class UserController {
@@ -14,6 +14,17 @@ class UserController {
       code: 200,
       message: '注册成功!'
     };
+  }
+  async saveUser(ctx, next) {
+
+    const user = ctx.request.body;
+    const res = await UserDao.saveUser(user);
+    console.log(res);
+    ctx.body = {
+      code: 200,
+      message: '注册成功!',
+      data: res
+    }
   }
 }
 
