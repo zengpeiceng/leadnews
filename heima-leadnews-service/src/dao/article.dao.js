@@ -1,9 +1,7 @@
-const Sequelize = require("sequelize");
-
 const Article = require("../model/article.model");
 const ArticleCover = require("../model/article_cover.model");
 
-const Op = Sequelize.Op;
+const { Op } = require("sequelize");
 
 class ArticleDao {
   // 发布文章
@@ -38,7 +36,7 @@ class ArticleDao {
       };
     }
 
-    const res = await Article.findAll({
+    const res = await Article.findAndCountAll({
       where: statement,
       offset,
       limit,
@@ -53,7 +51,8 @@ class ArticleDao {
           attributes: ["url"],
         },
       ],
-    });
+      distinct: true
+    })
     return res;
   }
 }
