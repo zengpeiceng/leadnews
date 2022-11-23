@@ -38,6 +38,7 @@ declare module '@vue/runtime-core' {
     ElUpload: typeof import('element-plus/es')['ElUpload']
     HyPagenation: typeof import('./components/HyPagenation.vue')['default']
     IEpDelete: typeof import('~icons/ep/delete')['default']
+    IEpDownload: typeof import('~icons/ep/download')['default']
     IEpEdit: typeof import('~icons/ep/edit')['default']
     IEpIcon: typeof import('~icons/ep/icon')['default']
     IEpMenu: typeof import('~icons/ep/menu')['default']

@@ -13,7 +13,10 @@
         </el-form-item>
         <el-col>
           <el-form-item label="关键字：">
-            <el-input placeholder="请输入关键字" v-model="searchData.keyword"></el-input>
+            <el-input
+              placeholder="请输入关键字"
+              v-model="searchData.keyword"
+            ></el-input>
           </el-form-item>
           <el-form-item label="频道列表：">
             <el-select v-model="searchData.channelId">
@@ -38,19 +41,50 @@
         </el-col>
       </template>
       <template #main>
-        <el-card v-for="item in contentlist">
+        <el-card
+          v-for="(item, index) in contentlist"
+          @mouseenter="showEditIcon($event, index)"
+          @mouseleave="hiddenEditIcon($event, index)"
+          :key="item.id"
+        >
           <el-image :src="item.images[0]" alt="">
             <template #error>
-              <img class="image-slot" src="/src/assets/img/error/pic_nopic.6de7db9.png" />
+              <img
+                class="image-slot"
+                src="/src/assets/img/error/pic_nopic.6de7db9.png"
+              />
             </template>
           </el-image>
+          <div class="edit" v-if="item.status != 9">
+            <el-icon size="20" @click="editAritcle(item.id)">
+              <i-ep-Edit />
+            </el-icon>
+            <el-icon size="20" @click="deleteAritcle(item.id)">
+              <i-ep-Delete />
+            </el-icon>
+          </div>
+          <div class="edit" v-else>
+            <el-icon
+              v-if="
+                judgeStatus(item.status, item.enable, item.type) === '已下架'
+              "
+              @click="changeArticleStatus(item.id)"
+            >
+              <el-icon @click="changeArticleStatus(item.id)"><i-ep-Upload /></el-icon>
+            </el-icon>
+            <el-icon v-else>
+              <el-icon><i-ep-Download /></el-icon>
+            </el-icon>
+          </div>
           <div style="padding: 10px 16px 0 17px">
             <p class="title">{{ item.title }}</p>
             <div class="desc">
               <span class="time">{{ formatTime(item.publishTime) }}</span>
-              <span v-if="item.reason" :class="getClassObj(item.status, item.enable, item.type)">{{
-                item.reason
-              }}</span>
+              <span
+                v-if="item.reason"
+                :class="getClassObj(item.status, item.enable, item.type)"
+                >{{ item.reason }}</span
+              >
               <span :class="getClassObj(item.status, item.enable, item.type)">{{
                 getOtherMessage(item.status, item.enable, item.type)
               }}</span>
@@ -83,63 +117,71 @@ const searchData = reactive({
   status: "", // 文章状态
   keyword: "", // 关键字
   channelId: "", // 频道id
-  date: [] //发布日期
-})
+  date: [], //发布日期
+});
 
-watch(searchData, async (newValue) => {
-  // 更新contentlist
-  getContentlistFunc();
-}, {
-  deep: true
-})
+watch(
+  searchData,
+  async (newValue) => {
+    // 更新contentlist
+    getContentlistFunc();
+  },
+  {
+    deep: true,
+  }
+);
 
 // 请求文章内容
 const getContentlistFunc = async () => {
-  const data = { ...searchData};
+  const data = { ...searchData };
   // 日期处理
-  if(searchData.date.length > 0) {
-    data.beginPubDate = searchData.date[0]
+  if (searchData.date.length > 0) {
+    data.beginPubDate = searchData.date[0];
     data.endPubDate = searchData.date[1];
   }
   delete data.date;
   // 没有值的不传过去。
   for (const key in data) {
-    if(data[key] === "" || data[key] === undefined || data[key] === null ){
-      delete data[key]
+    if (data[key] === "" || data[key] === undefined || data[key] === null) {
+      delete data[key];
     }
   }
-  const res = await getContentlist({...data, size: pageSize.value, page: currentPage.value});
+  const res = await getContentlist({
+    ...data,
+    size: pageSize.value,
+    page: currentPage.value,
+  });
   contentlist.value = res.data;
   total.value = res.total;
-}
+};
 // 判断状态
 const judgeStatus = (status, enable, type, resource) => {
-  let className = ""
+  let className = "";
   let statusName = "";
-  if(status == 0) {
+  if (status == 0) {
     statusName = "草稿";
     className = "reason draft";
-    } else if(status == 9) {
-      if(enable == 1 && type == 1) {
-        statusName = "已上架"
-        className = "reason audit"
-      }else if(enable == 1 && type == 0){
-        statusName = "已下架"
-        className = "reason draft"
-      }else {
-        statusName = "审核未通过"
-        statusName = "reason unaudit";
-      }
-    }else if(status == 1) {
-      statusName = "待审核"
-      className = "reason audit"
+  } else if (status == 9) {
+    if (enable == 1 && type == 1) {
+      statusName = "已上架";
+      className = "reason audit";
+    } else if (enable == 1 && type == 0) {
+      statusName = "已下架";
+      className = "reason draft";
+    } else {
+      statusName = "审核未通过";
+      statusName = "reason unaudit";
     }
-  if(resource == 1) {
+  } else if (status == 1) {
+    statusName = "待审核";
+    className = "reason audit";
+  }
+  if (resource == 1) {
     return className;
-  }else {
+  } else {
     return statusName;
   }
-}
+};
 // 获取文章状态样式
 const getClassObj = computed(() => {
   return (status, enable, type) => judgeStatus(status, enable, type, 1);
@@ -155,12 +197,29 @@ const getOtherMessage = computed(() => {
    * 待审核：       type 1   enable 1  status 1
    */
 });
-// 页码变化 
+// 页码变化
 const handlePageChange = async ({ page, size }) => {
-  currentPage.value = page; 
+  currentPage.value = page;
   pageSize.value = size;
   getContentlistFunc();
 };
+
+// showEditIcon
+const showEditIcon = (e, i) => {
+  const iconEls = document.querySelectorAll(".edit");
+  iconEls[i].style.display = "block";
+};
+const hiddenEditIcon = (e, i) => {
+  const iconEls = document.querySelectorAll(".edit");
+  iconEls[i].style.display = "none";
+};
+
+const deleteAritcle = (id) => {}
+const editAritcle = (id) => {}
+
+const changeArticleStatus = (id) => {
+
+}
 
 onBeforeMount(async () => {
   // 频道
@@ -211,9 +270,24 @@ onBeforeMount(async () => {
       height: 240px;
       margin: 30px 30px 0 0;
       border-radius: 10px;
-      .el-image, .image-slot {
+      .el-image,
+      .image-slot {
         width: 100%;
         height: 155px;
+      }
+      .edit {
+        position: absolute;
+        display: none;
+        cursor: pointer;
+        top: 10px;
+        right: 10px;
+        .el-icon {
+          background-color: #fff;
+          margin: 0 5px;
+          width: 40px;
+          height: 40px;
+          border-radius: 45%;
+        }
       }
       .title {
         width: 100%;

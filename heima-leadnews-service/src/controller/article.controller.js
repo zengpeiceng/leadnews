@@ -22,7 +22,9 @@ class ArticleController {
       // 添加reason
       if (
         item.dataValues.publishTime >= Date.now() &&
-        item.dataValues.status != 0 && item.enable != 0 && item.dataValues.type != 0
+        item.dataValues.status != 0 &&
+        item.enable != 0 &&
+        item.dataValues.type != 0
       ) {
         item.dataValues.reason = "待发布";
       } else if (item.dataValues.status == 9) {
@@ -39,6 +41,11 @@ class ArticleController {
       return item.dataValues;
     });
     success(ctx, data, "SUCCESS", 200, null, total);
+  }
+  async delArticle(ctx, next) {
+    const id = ctx.request.params.id;
+    const res = await ArticleDao.delArticle(id);
+    success(ctx, "SUCCESS", "删除成功", 200, null);
   }
 }
 

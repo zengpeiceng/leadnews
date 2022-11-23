@@ -4,7 +4,6 @@ const Multer = require("@koa/multer");
 
 const errorTypes = require("../constants/error-types");
 const { MATERIAL_PATH } = require("../constants/file-path");
-const fileService = require("../service/material.services");
 const materialDao = require("../dao/material.dao");
 
 const materialUpload = Multer({

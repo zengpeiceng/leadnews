@@ -54,6 +54,25 @@ class ArticleDao {
     });
     return { list: rows, total: count };
   }
+  // 验证权限
+  async verifyPermission(userId, id) {
+    const res = await Article.count({
+      where: {
+        id,
+        userId
+      }
+    })
+    return res;
+  }
+  // 删除文章
+  async delArticle(id) {
+    const res = await Article.destroy({
+      where: {
+        id
+      }
+    })
+    return res;
+  }
 }
 
 module.exports = new ArticleDao();
