@@ -141,15 +141,16 @@
 
 <script setup>
 import { ref, onBeforeMount } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import MainFrameVue from "/src/components/MainFrame.vue";
 import DialogBox from "./c-cpn/DialogBox.vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 import { getChannels } from "/src/api/channel.js";
-import { publishArticle } from "/src/api/article.js";
+import { publishArticle, getArticleById } from "/src/api/article.js";
 import toolTips from "/src/hook/toolTips.js";
 
 const router = useRouter();
+const route = useRoute();
 
 let channels = ref([]); // 频道列表
 
@@ -229,15 +230,27 @@ const selectCover = (i) => {
 };
 // 提交表单
 const submitForm = async (operate) => {
+  switch(formData.value.type) {
+    case 1: formData.value.images.splice(1, 2);break;
+    case 0:
+    case 1: formData.value.images = [];break;
+  }
+  console.log(formData.value.images.pop());
+  console.log('type', formData.value.type);
   const result = await publishArticle(operate, formData.value);
   toolTips(result, () => {
     router.push("/contentlist");
   });
 };
-// 获取频道列表
+// 获取频道列表 / query
 onBeforeMount(async () => {
   const result = await getChannels();
   channels.value = result.data;
+
+  if (route.query.id) {
+    const res = await getArticleById(route.query.id);
+    formData.value = { ...res.data[0] };
+  }
 });
 </script>
 

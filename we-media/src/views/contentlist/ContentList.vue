@@ -70,7 +70,9 @@
               "
               @click="changeArticleStatus(item.id)"
             >
-              <el-icon @click="changeArticleStatus(item.id)"><i-ep-Upload /></el-icon>
+              <el-icon @click="changeArticleStatus(item.id)"
+                ><i-ep-Upload
+              /></el-icon>
             </el-icon>
             <el-icon v-else>
               <el-icon><i-ep-Download /></el-icon>
@@ -101,11 +103,16 @@
 
 <script setup>
 import { ref, reactive, onBeforeMount, computed, watch } from "vue";
+import { useRouter } from "vue-router";
 import MainFrameVue from "/src/components/MainFrame.vue";
 import PageBox from "/src/components/PageBox.vue";
 import { getChannels } from "/src/api/channel.js";
-import { getContentlist } from "/src/api/content.js";
+import { getContentlist, deleteArticle } from "/src/api/article.js";
+import toolTips from "/src/hook/toolTips.js";
 import formatTime from "/src/hook/formatTime.js";
+
+const router = useRouter();
+
 const channels = ref(); // 频道列表
 const contentlist = ref([]); // 文章列表
 
@@ -214,12 +221,17 @@ const hiddenEditIcon = (e, i) => {
   iconEls[i].style.display = "none";
 };
 
-const deleteAritcle = (id) => {}
-const editAritcle = (id) => {}
+const deleteAritcle = async (id) => {
+  const res = await deleteArticle(id);
+  toolTips(res, () => {
+    getContentlistFunc();
+  });
+};
+const editAritcle = (id) => {
+  router.push(`/article?id=${id}`);
+};
 
-const changeArticleStatus = (id) => {
-
-}
+const changeArticleStatus = (id) => {};
 
 onBeforeMount(async () => {
   // 频道

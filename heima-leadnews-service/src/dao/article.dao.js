@@ -11,6 +11,24 @@ class ArticleDao {
     });
     return res.dataValues.id;
   }
+  async getArticlById(id) {
+    const res = await Article.findAll({
+      where: {
+        id
+      },
+      include: [
+        {
+          model: ArticleCover,
+          as: "images",
+          raw: true,
+          required: false, // 左外连接
+          attributes: ["url"]
+        }
+      ],
+      distinct: true
+    })
+    return res;
+  }
   // 获取文章
   async getArticles(data) {
     const offset = data.page - 1,
@@ -48,6 +66,7 @@ class ArticleDao {
           raw: true,
           required: false, // 左外连接
           // 要显示的子表中的数据
+          attributes: ["url"]
         },
       ],
       distinct: true,
@@ -69,6 +88,18 @@ class ArticleDao {
     const res = await Article.destroy({
       where: {
         id
+      }
+    })
+    return res;
+  }
+  async updateArticle(data) {
+    const { id, userId } = data;
+    delete data.id, data.userId
+  
+    const res = await Article.update(data,{
+      where: {
+        id,
+        userId
       }
     })
     return res;

@@ -5,14 +5,48 @@ class ArticleController {
   // 上传文章
   async submitArticle(ctx, next) {
     const userId = ctx.user.id;
-    const articleId = await ArticleDao.saveArticle({
-      ...ctx.request.body,
-      userId,
-    });
-    for (const url of ctx.request.body.images) {
-      const res = await ArticleCoverDao.saveArticleCover(articleId, url);
+    const id = ctx.request.body.id;
+    if (!id) {
+      // 保存
+      const articleId = await ArticleDao.saveArticle({
+        ...ctx.request.body,
+        userId,
+      });
+      if (ctx.request.body.images.length > 0) {
+        for (const url of ctx.request.body.images) {
+          const res = await ArticleCoverDao.saveArticleCover(articleId, url);
+        }
+      }
+    } else {
+      // 编辑
+      const articleId = await ArticleDao.updateArticle({
+        ...ctx.request.body,
+        userId,
+      });
+      // 先删除封面
+      const res = await ArticleCoverDao.deleteCoverById(id);
+      // 再保存
+      if (ctx.request.body.images.length > 0) {
+        const images = ctx.request.body.images;
+        images.forEach(async (url) => {
+          await ArticleCoverDao.saveArticleCover(id, url);
+        });
+      }
     }
     success(ctx, "SUCCESS", "发布成功", 200, null);
+  }
+  async getArticlById(ctx, next) {
+    const id = ctx.request.params.id;
+    const res = await ArticleDao.getArticlById(id);
+    const data = res.map((item) => {
+      // 处理封面（默认返回对象数组，这里我返回字符串数组
+      const imgs = item.dataValues.images.map((i) => {
+        return i?.url;
+      });
+      item.dataValues.images = imgs;
+      return item.dataValues;
+    });
+    success(ctx, data, "SUCCESS", 200, null);
   }
   // 获取素材文章(全部)
   async getArticles(ctx, next) {

@@ -1,5 +1,6 @@
 import request from '/src/utils/request';
 
+// 发布
 export function publishArticle(operate, data) {
   let url = "";
   if(operate) {
@@ -16,5 +17,27 @@ export function publishArticle(operate, data) {
     method: "POST",
     url,
     data
+  })
+}
+// 查询
+export function getContentlist(data) {
+  return request({
+    method: "POST",
+    url: "/article/list",
+    data
+  })
+}
+// 单个文章
+export function getArticleById(id) {
+  return request({
+    method: "GET",
+    url: `/article/one/${id}`
+  })
+}
+
+export function deleteArticle(id) {
+  return request({
+    method: "DELETE",
+    url: `/article_delete/${id}`
   })
 }
