@@ -9,6 +9,9 @@ import '@wangeditor/editor/dist/css/style.css'
 import "@/assets/css/base.css"
 import "@/assets/css/general.less"
 
+// 事件管理
+import 'default-passive-events'
+
 const app = createApp(App)
 
 app.use(router)

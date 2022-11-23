@@ -2,8 +2,8 @@
   <div id="contentlist">
     <MainFrameVue>
       <template #header>
-        <el-form-item label="文章状态：">
-          <el-radio-group v-model="status">
+        <el-form-item label="文章状态：" style="padding-top: 30px">
+          <el-radio-group v-model="searchData.status">
             <el-radio label="">全部</el-radio>
             <el-radio :label="0">草稿</el-radio>
             <el-radio :label="1">待审核</el-radio>
@@ -13,10 +13,10 @@
         </el-form-item>
         <el-col>
           <el-form-item label="关键字：">
-            <el-input placeholder="请输入关键字" v-model="keyword"></el-input>
+            <el-input placeholder="请输入关键字" v-model="searchData.keyword"></el-input>
           </el-form-item>
           <el-form-item label="频道列表：">
-            <el-select v-model="channelId">
+            <el-select v-model="searchData.channelId">
               <el-option value="" label="全部">全部</el-option>
               <el-option
                 v-for="item in channels"
@@ -28,7 +28,7 @@
           </el-form-item>
           <el-form-item label="发布日期：">
             <el-date-picker
-              v-model="date"
+              v-model="searchData.date"
               type="daterange"
               range-separator="-"
               start-placeholder="开始时间"
@@ -37,31 +37,130 @@
           </el-form-item>
         </el-col>
       </template>
-      <template #main> 
+      <template #main>
         <el-card v-for="item in contentlist">
-          <img :src="item.images[0]" alt="">
-          <p>{{item.title}}</p>
-          <div>
-            <span>{{item.publishTime}}</span>
+          <el-image :src="item.images[0]" alt="">
+            <template #error>
+              <img class="image-slot" src="/src/assets/img/error/pic_nopic.6de7db9.png" />
+            </template>
+          </el-image>
+          <div style="padding: 10px 16px 0 17px">
+            <p class="title">{{ item.title }}</p>
+            <div class="desc">
+              <span class="time">{{ formatTime(item.publishTime) }}</span>
+              <span v-if="item.reason" :class="getClassObj(item.status, item.enable, item.type)">{{
+                item.reason
+              }}</span>
+              <span :class="getClassObj(item.status, item.enable, item.type)">{{
+                getOtherMessage(item.status, item.enable, item.type)
+              }}</span>
+            </div>
           </div>
         </el-card>
+      </template>
+      <template #footer>
+        <PageBox :total="total" @pageChange="handlePageChange" />
       </template>
     </MainFrameVue>
   </div>
 </template>
 
 <script setup>
-import { ref, onBeforeMount } from "vue";
+import { ref, reactive, onBeforeMount, computed, watch } from "vue";
 import MainFrameVue from "/src/components/MainFrame.vue";
+import PageBox from "/src/components/PageBox.vue";
 import { getChannels } from "/src/api/channel.js";
 import { getContentlist } from "/src/api/content.js";
+import formatTime from "/src/hook/formatTime.js";
 const channels = ref(); // 频道列表
 const contentlist = ref([]); // 文章列表
 
-const status = ref(""); // 文章状态
-const keyword = ref(); // 关键字
-const channelId = ref(""); // 频道id
-const date = ref(); //发布日期
+const total = ref(); // 总数
+const pageSize = ref(10);
+const currentPage = ref(1);
+
+const searchData = reactive({
+  status: "", // 文章状态
+  keyword: "", // 关键字
+  channelId: "", // 频道id
+  date: [] //发布日期
+})
+
+watch(searchData, async (newValue) => {
+  // 更新contentlist
+  getContentlistFunc();
+}, {
+  deep: true
+})
+
+// 请求文章内容
+const getContentlistFunc = async () => {
+  const data = { ...searchData};
+  // 日期处理
+  if(searchData.date.length > 0) {
+    data.beginPubDate = searchData.date[0]
+    data.endPubDate = searchData.date[1];
+  }
+  delete data.date;
+  // 没有值的不传过去。
+  for (const key in data) {
+    if(data[key] === "" || data[key] === undefined || data[key] === null ){
+      delete data[key]
+    }
+  }
+  const res = await getContentlist({...data, size: pageSize.value, page: currentPage.value});
+  contentlist.value = res.data;
+  total.value = res.total;
+}
+// 判断状态
+const judgeStatus = (status, enable, type, resource) => {
+  let className = ""
+  let statusName = "";
+  if(status == 0) {
+    statusName = "草稿";
+    className = "reason draft";
+    } else if(status == 9) {
+      if(enable == 1 && type == 1) {
+        statusName = "已上架"
+        className = "reason audit"
+      }else if(enable == 1 && type == 0){
+        statusName = "已下架"
+        className = "reason draft"
+      }else {
+        statusName = "审核未通过"
+        statusName = "reason unaudit";
+      }
+    }else if(status == 1) {
+      statusName = "待审核"
+      className = "reason audit"
+    }
+  if(resource == 1) {
+    return className;
+  }else {
+    return statusName;
+  }
+}
+// 获取文章状态样式
+const getClassObj = computed(() => {
+  return (status, enable, type) => judgeStatus(status, enable, type, 1);
+});
+// 获取文章状态
+const getOtherMessage = computed(() => {
+  return (status, enable, type) => judgeStatus(status, enable, type, 0);
+  /**
+   * 已发布 已下架：type 0   enable 0 status 9
+   * 草稿：         type 0  enable 1 status 0
+   * 已发布 已上架：type 1   enable 1 status 9
+   * 审核未通过：   type 1   enable 0 status 9
+   * 待审核：       type 1   enable 1  status 1
+   */
+});
+// 页码变化 
+const handlePageChange = async ({ page, size }) => {
+  currentPage.value = page; 
+  pageSize.value = size;
+  getContentlistFunc();
+};
 
 onBeforeMount(async () => {
   // 频道
@@ -73,16 +172,17 @@ onBeforeMount(async () => {
     size: 10,
   });
   contentlist.value = res2.data;
+  total.value = res2.total;
 });
 </script>
 
 <style lang="less" scoped>
 #contentlist {
   :deep(.header) {
-    height: 136px;
+    height: 156px;
     .el-form-item {
       display: flex;
-      height: 58px;
+      height: 68px;
       margin-right: 20px;
       align-items: center;
       .el-form-item__label {
@@ -103,10 +203,51 @@ onBeforeMount(async () => {
     }
   }
   :deep(.main) {
+    padding: 0 0 40px 30px;
+    display: flex;
+    flex-wrap: wrap;
     .el-card {
-      img {
-        width: 231px;
+      width: 230px;
+      height: 240px;
+      margin: 30px 30px 0 0;
+      border-radius: 10px;
+      .el-image, .image-slot {
+        width: 100%;
         height: 155px;
+      }
+      .title {
+        width: 100%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        color: #20232a;
+        font-weight: 600;
+      }
+      .desc {
+        margin-top: 10px;
+        display: flex;
+        justify-content: space-between;
+      }
+      .reason {
+        padding: 3px 7px;
+        border-radius: 4px;
+        font-size: 13px;
+      }
+      .publish {
+        background: #ebf7f2;
+        color: #3bd396;
+      }
+      .audit {
+        color: #3175fb;
+        background: #eef4ff;
+      }
+      .unaudit {
+        color: #ff5c5c;
+        background: #ffefef;
+      }
+      .draft {
+        color: #58637d;
+        background: #f0f3f9;
       }
     }
   }

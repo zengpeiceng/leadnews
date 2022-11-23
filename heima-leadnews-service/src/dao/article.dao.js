@@ -20,23 +20,22 @@ class ArticleDao {
     delete statement.page;
     delete statement.size;
 
-    const { keyword, endPubdate, beginPubdate } = data;
+    const { keyword, endPubDate, beginPubDate } = data;
     // 关键字查询（title)
-    if (keyword) {
+    if (keyword != "" && keyword != undefined && keyword != null && keyword) {
       statement.title = { [Op.like]: `%${keyword}%` };
       delete statement.keyword;
     }
-    if (beginPubdate && beginPubdate) {
-      delete statement.beginPubdate;
-      delete statement.endPubdate;
+    if (beginPubDate && beginPubDate) {
+      delete statement.beginPubDate;
+      delete statement.endPubDate;
       // 发布时间区间
       statement.publishTime = {
-        [Op.gte]: beginPubdate, // <=
-        [Op.lte]: endPubdate, // >=
+        [Op.gte]: beginPubDate, // <=
+        [Op.lte]: endPubDate, // >=
       };
     }
-
-    const res = await Article.findAndCountAll({
+    const { rows, count } = await Article.findAndCountAll({
       where: statement,
       offset,
       limit,
@@ -47,13 +46,13 @@ class ArticleDao {
           as: "images", // 查询字段别名
           required: true, // 采用内连接
           raw: true,
+          required: false, // 左外连接
           // 要显示的子表中的数据
-          attributes: ["url"],
         },
       ],
-      distinct: true
-    })
-    return res;
+      distinct: true,
+    });
+    return { list: rows, total: count };
   }
 }
 

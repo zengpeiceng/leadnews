@@ -141,6 +141,7 @@
 
 <script setup>
 import { ref, onBeforeMount } from "vue";
+import { useRouter } from "vue-router";
 import MainFrameVue from "/src/components/MainFrame.vue";
 import DialogBox from "./c-cpn/DialogBox.vue";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
@@ -148,7 +149,9 @@ import { getChannels } from "/src/api/channel.js";
 import { publishArticle } from "/src/api/article.js";
 import toolTips from "/src/hook/toolTips.js";
 
-let channels = ref([]);   // 频道列表
+const router = useRouter();
+
+let channels = ref([]); // 频道列表
 
 let pickerOptions = ref({
   // 只能选今天及以后
@@ -207,7 +210,7 @@ let editorConfig = ref({
   },
 });
 
-let showDialog = ref(false); // 是否显示对话框 
+let showDialog = ref(false); // 是否显示对话框
 let currCover = ref(0); // 当前的封面
 
 // 初始化editor
@@ -227,7 +230,9 @@ const selectCover = (i) => {
 // 提交表单
 const submitForm = async (operate) => {
   const result = await publishArticle(operate, formData.value);
-  toolTips(result);
+  toolTips(result, () => {
+    router.push("/contentlist");
+  });
 };
 // 获取频道列表
 onBeforeMount(async () => {
