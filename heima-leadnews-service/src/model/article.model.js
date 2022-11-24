@@ -52,9 +52,5 @@ Article.init({
   tableName: "article",
   timestamps: false
 })
-Article.hasMany(ArticleCover, {
-  foreignKey: "articleId",
-  // 关联别名，在子查询时字段为images(在子查询includes时也配置as)
-  as: 'images'
-})
+
 module.exports = Article;

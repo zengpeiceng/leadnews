@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const Channel = require("../model/channel.model");
+const { Channel } = require("../model/index");
 
 class ChannelDao {
   // 全部
@@ -30,26 +30,24 @@ class ChannelDao {
   async adminUpdateChannel(data) {
     const { id } = data;
     delete data.id;
-    const res = await Channel.update(data,
-      {
-        where: {
-          id,
-        },
-      }
-    );
+    const res = await Channel.update(data, {
+      where: {
+        id,
+      },
+    });
   }
   // del
   async adminDelChannel(id) {
     const res = await Channel.destroy({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
     return res;
   }
   // create
   async adminSaveChannel(data) {
-    const res = await Channel.create(data)
+    const res = await Channel.create(data);
     return res;
   }
 }

@@ -38,9 +38,4 @@ Material.init(
   }
 );
 
-// Material.belongsTo(User, {
-//   foreginKey: "userId",
-//   targetKey: "id"
-// });
-
 module.exports = Material;

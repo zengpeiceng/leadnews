@@ -87,6 +87,12 @@ class ArticleController {
     const res = await ArticleDao.changeArticleEnable(id, enable);
     success(ctx, "SUCCESS", "操作成功", 200, null);
   }
+  // admin端article列表
+  async showArticleRelativeMsg(ctx, next) {
+    const res = await ArticleDao.showArticleRelativeMsg(ctx.request.body);
+    const total = res.total
+    success(ctx, res, "SUCCESS", 200, null, total);
+  }
 }
 
 module.exports = new ArticleController();

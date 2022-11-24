@@ -1,19 +1,19 @@
-const ArticleCover = require("../model/article_cover.model");
+const { ArticleCover } = require("../model/index");
 
 class ArticleCoverDao {
   async saveArticleCover(articleId, url) {
     const res = ArticleCover.create({
       articleId,
-      url
-    })
+      url,
+    });
     return res;
   }
   async deleteCoverById(articleId) {
     const res = await ArticleCover.destroy({
       where: {
-        articleId
-      }
-    })
+        articleId,
+      },
+    });
     return res;
   }
 }

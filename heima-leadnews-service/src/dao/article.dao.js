@@ -1,5 +1,4 @@
-const Article = require("../model/article.model");
-const ArticleCover = require("../model/article_cover.model");
+const { Article, ArticleCover, User} = require("../model/index");
 
 const { Op } = require("sequelize");
 
@@ -14,7 +13,7 @@ class ArticleDao {
   async getArticlById(id) {
     const res = await Article.findAll({
       where: {
-        id
+        id,
       },
       include: [
         {
@@ -22,11 +21,11 @@ class ArticleDao {
           as: "images",
           raw: true,
           required: false, // 左外连接
-          attributes: ["url"]
-        }
+          attributes: ["url"],
+        },
       ],
-      distinct: true
-    })
+      distinct: true,
+    });
     return res;
   }
   // 获取文章
@@ -66,7 +65,7 @@ class ArticleDao {
           raw: true,
           required: false, // 左外连接
           // 要显示的子表中的数据
-          attributes: ["url"]
+          attributes: ["url"],
         },
       ],
       distinct: true,
@@ -78,42 +77,78 @@ class ArticleDao {
     const res = await Article.count({
       where: {
         id,
-        userId
-      }
-    })
+        userId,
+      },
+    });
     return res;
   }
   // 删除文章
   async delArticle(id) {
     const res = await Article.destroy({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
     return res;
   }
   async updateArticle(data) {
     const { id, userId } = data;
-    delete data.id, data.userId
-  
-    const res = await Article.update(data,{
+    delete data.id, data.userId;
+
+    const res = await Article.update(data, {
       where: {
         id,
-        userId
-      }
-    })
+        userId,
+      },
+    });
     return res;
   }
   // 上架/下架
   async changeArticleEnable(id, enable) {
-    const res = await Article.update({
-      enable
-    }, {
-      where: {
-        id
+    const res = await Article.update(
+      {
+        enable,
+      },
+      {
+        where: {
+          id,
+        },
       }
-    })
+    );
     return res;
+  }
+  async showArticleRelativeMsg(data) {
+    const { page, size, userId, title, status } = data;
+    delete data.userId, page, size;
+    let statement = null;
+    if (title) {
+      statement.title = {
+        [Op.like]: `%${title}%`,
+      };
+    }
+    if (status) {
+      statement.status = status;
+    }
+    console.log(statement);
+    const { rows, total } = Article.findAndCountAll({
+      where: statement,
+      include: [
+        {
+          model: User,
+          as: "author",
+          required: false,
+          where: {
+            userId,
+          },
+        },
+        {
+          model: ArticleCover,
+          as: "images",
+          required: false,
+        },
+      ],
+    });
+    return { data: rows, total };
   }
 }
 

@@ -1,4 +1,4 @@
-const User = require("../model/user.model");
+const { User } = require("../model/index");
 
 class UserDao {
   // 注册用户
@@ -11,17 +11,18 @@ class UserDao {
   async queryUser(user) {
     const res = await User.findAll({
       where: {
-        ...user
-      }
-    })
+        ...user,
+      },
+    });
+
     return res;
   }
   async getUserByName(name) {
     const res = await User.findAll({
       where: {
-        name
-      }
-    })
+        name,
+      },
+    });
     return res;
   }
 }

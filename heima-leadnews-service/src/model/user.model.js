@@ -1,6 +1,5 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../app/db");
-const Material = require("./material.model");
 
 class User extends Model {}
 User.init(
@@ -29,9 +28,14 @@ User.init(
     timestamps: false,
   }
 );
-User.hasMany(Material, {
-  foreignKey: "userId",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
+// User.hasMany(Material, {
+//   foreignKey: "userId",
+//   onDelete: "CASCADE",
+//   onUpdate: "CASCADE",
+// });
+// User.hasMany(Article, {
+//   foreignKey: "userId",
+//   onDelete: "CASCADE",
+//   onUpdate: "CASCADE",
+// })
 module.exports = User;

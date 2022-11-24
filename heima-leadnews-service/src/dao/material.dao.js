@@ -1,4 +1,4 @@
-const Material = require("../model/material.model");
+const { Material } = require("../model/index");
 
 class MaterialDao {
   // 上传素材
@@ -19,8 +19,11 @@ class MaterialDao {
   async getMaterials(isCollection, page, size) {
     let statement;
     if (isCollection == 1) {
-      statement =
-        { where: { isCollection }, limit: size, offset: (page - 1) * size };
+      statement = {
+        where: { isCollection },
+        limit: size,
+        offset: (page - 1) * size,
+      };
     } else {
       statement = { limit: size, offset: (page - 1) * size };
     }
@@ -30,51 +33,57 @@ class MaterialDao {
   // total
   async getMaterialLength(isCollection) {
     let statement;
-    if(isCollection == 1) {
-      statement = {where: {isCollection}}
-    }else {
-      statement = null
+    if (isCollection == 1) {
+      statement = { where: { isCollection } };
+    } else {
+      statement = null;
     }
-    const res = await Material.count(statement)
+    const res = await Material.count(statement);
     return res;
   }
   // 收藏素材
   async collectMaterial(id) {
-    const res = Material.update({
-      isCollection: 1
-    }, {
-      where: {
-        id
+    const res = Material.update(
+      {
+        isCollection: 1,
+      },
+      {
+        where: {
+          id,
+        },
       }
-    })
+    );
   }
-  // 取消收藏 
+  // 取消收藏
   async cancelCollect(id) {
-    const res = Material.update({
-      isCollection: 0
-    }, {
-      where: {
-        id
+    const res = Material.update(
+      {
+        isCollection: 0,
+      },
+      {
+        where: {
+          id,
+        },
       }
-    })
+    );
   }
   // 验证删除素材权限
   async verifyPermission(uid, mid) {
     const res = await Material.findAll({
       where: {
         id: mid.id,
-        userId: uid
-      }
-    })
+        userId: uid,
+      },
+    });
     return res;
   }
   // 删除素材
   async removeMaterial(id) {
     const res = await Material.destroy({
       where: {
-        id
-      }
-    })
+        id,
+      },
+    });
     return res;
   }
 }
