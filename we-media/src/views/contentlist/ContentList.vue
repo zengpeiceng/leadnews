@@ -66,13 +66,12 @@
           <div class="edit" v-else>
             <el-icon
               v-if="judgeStatus(item.status, item.enable) === '已下架'"
-              @click="changeArticleStatus(item.id)"
+              @click="changeArticleEnable(item.id, 1)"
             >
-              <el-icon @click="changeArticleStatus(item.id)"
-                ><i-ep-Upload
+              <el-icon><i-ep-Upload
               /></el-icon>
             </el-icon>
-            <el-icon v-else>
+            <el-icon v-else @click="changeArticleEnable(item.id, 0)">
               <el-icon><i-ep-Download /></el-icon>
             </el-icon>
           </div>
@@ -107,7 +106,7 @@ import { useRouter } from "vue-router";
 import MainFrameVue from "/src/components/MainFrame.vue";
 import PageBox from "/src/components/PageBox.vue";
 import { getChannels } from "/src/api/channel.js";
-import { getContentlist, deleteArticle } from "/src/api/article.js";
+import { getContentlist, deleteArticle, donw_or_up } from "/src/api/article.js";
 import toolTips from "/src/hook/toolTips.js";
 import formatTime from "/src/hook/formatTime.js";
 
@@ -231,8 +230,11 @@ const editAritcle = (id) => {
   router.push(`/article?id=${id}`);
 };
 
-const changeArticleStatus = (id) => {
-  
+const changeArticleEnable = async (id, enable) => {
+  const res = await donw_or_up({ id, enable });
+  toolTips(res, () => {
+    getContentlistFunc();
+  });
 };
 
 onBeforeMount(async () => {

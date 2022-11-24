@@ -8,6 +8,7 @@ const {
   getArticlById,
   getArticles,
   delArticle,
+  changeArticleEnable
 } = require("../controller/article.controller");
 
 // 发表文章
@@ -23,5 +24,7 @@ articleRouter.delete(
   verifyPermission,
   delArticle
 );
+// 上架或下回
+articleRouter.post("wemedia/article/down_or_up", verifyAuth, changeArticleEnable)
 
 module.exports = articleRouter;

@@ -104,6 +104,17 @@ class ArticleDao {
     })
     return res;
   }
+  // 上架/下架
+  async changeArticleEnable(id, enable) {
+    const res = await Article.update({
+      enable
+    }, {
+      where: {
+        id
+      }
+    })
+    return res;
+  }
 }
 
 module.exports = new ArticleDao();

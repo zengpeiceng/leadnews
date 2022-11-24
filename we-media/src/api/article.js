@@ -39,3 +39,11 @@ export function deleteArticle(id) {
     url: `/article_delete/${id}`
   })
 }
+
+export function donw_or_up(data) {
+  return request({
+    method: "POST",
+    url: "/article/down_or_up",
+    data
+  })
+}

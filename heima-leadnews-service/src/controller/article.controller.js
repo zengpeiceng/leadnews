@@ -81,6 +81,12 @@ class ArticleController {
     const res = await ArticleDao.delArticle(id);
     success(ctx, "SUCCESS", "删除成功", 200, null);
   }
+  // 上架、下架
+  async changeArticleEnable(ctx, next) {
+    const { id, enable } = ctx.request.body;
+    const res = await ArticleDao.changeArticleEnable(id, enable);
+    success(ctx, "SUCCESS", "操作成功", 200, null);
+  }
 }
 
 module.exports = new ArticleController();
