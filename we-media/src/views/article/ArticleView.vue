@@ -231,12 +231,10 @@ const selectCover = (i) => {
 // 提交表单
 const submitForm = async (operate) => {
   switch(formData.value.type) {
-    case 1: formData.value.images.splice(1, 2);break;
-    case 0:
-    case 1: formData.value.images = [];break;
+    case "1": formData.value.images.splice(1, 2);break;
+    case "0":
+    case "-1": formData.value.images = [];break;
   }
-  console.log(formData.value.images.pop());
-  console.log('type', formData.value.type);
   const result = await publishArticle(operate, formData.value);
   toolTips(result, () => {
     router.push("/contentlist");
@@ -250,6 +248,7 @@ onBeforeMount(async () => {
   if (route.query.id) {
     const res = await getArticleById(route.query.id);
     formData.value = { ...res.data[0] };
+    console.log(formData.value.type);
   }
 });
 </script>
