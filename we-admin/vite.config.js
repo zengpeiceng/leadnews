@@ -59,18 +59,4 @@ export default defineConfig({
 
     Inspect(),
   ],
-  // 跨域
-  server: {
-    proxy: {
-      '/Login/api/v1/login': {
-        target: 'http://localhost:51804',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/Login/, '')
-      },
-      '/admin/api/v1/channel/': {
-        target: 'http://localhost:51603',
-        changeOrigin: true
-      }
-    }
-  }
 })

@@ -32,6 +32,10 @@ Channel.init(
       allowNuLL: false,
       defaultValue: 1,
     },
+    createdTime: {
+      type: DataTypes.DATE,
+      defaultValue: Date.now()
+    }
   },
   {
     sequelize,

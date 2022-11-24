@@ -32,9 +32,9 @@
 </template>
 
 <script setup>
-import MainWrapperVue from "@/components/general/MainWrapper.vue";
+import MainWrapperVue from "/src/components/general/MainWrapper.vue";
 import { ref, onBeforeMount } from "vue";
-import formatTime from "@/utils/formatTime.js";
+import formatTime from "/src/utils/formatTime.js";
 let data = ref(null);
 onBeforeMount(() => {
   data.value = {

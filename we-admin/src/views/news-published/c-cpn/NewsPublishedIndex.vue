@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-import MainWrapperVue from "@/components/general/MainWrapper.vue";
+import MainWrapperVue from "/src/components/general/MainWrapper.vue";
 import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 

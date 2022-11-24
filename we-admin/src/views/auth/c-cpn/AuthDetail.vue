@@ -68,7 +68,7 @@
 import { ref, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
 
-import MainWrapperVue from "@/components/general/MainWrapper.vue";
+import MainWrapperVue from "/src/components/general/MainWrapper.vue";
 const data = ref(null);
 const route = useRoute();
 onBeforeMount(() => {

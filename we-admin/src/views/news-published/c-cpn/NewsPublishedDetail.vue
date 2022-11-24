@@ -41,10 +41,10 @@
 </template>
 
 <script setup>
-import MainWrapperVue from "@/components/general/MainWrapper.vue";
+import MainWrapperVue from "/src/components/general/MainWrapper.vue";
 import { onMounted, onBeforeMount, ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import formatTime from "@/utils/formatTime.js";
+import formatTime from "/src/utils/formatTime.js";
 const route = useRoute();
 const router = useRouter();
 const back = () => {

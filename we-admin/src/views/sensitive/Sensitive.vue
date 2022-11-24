@@ -70,8 +70,8 @@
 </template>
 
 <script setup>
-import MainWrapperVue from "@/components/general/MainWrapper.vue";
-import formatTime from "@/utils/formatTime.js";
+import MainWrapperVue from "/src/components/general/MainWrapper.vue";
+import formatTime from "/src/utils/formatTime.js";
 import { reactive, ref } from "vue";
 
 const formadd = ref(null);

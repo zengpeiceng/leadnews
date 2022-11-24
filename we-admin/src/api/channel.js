@@ -4,7 +4,7 @@ import request from '../utils/request';
 export function queryChannel(data) {
   return request({
     method: "POST",
-    url: "/admin/api/v1/channel/list",
+    url: "/channel/list",
     data
   })
 }

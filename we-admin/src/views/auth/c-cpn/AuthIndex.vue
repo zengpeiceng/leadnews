@@ -87,7 +87,7 @@
 <script setup>
 import { ref, onBeforeMount, computed, watch } from "vue";
 import { useRouter } from "vue-router";
-import MainWrapperVue from "@/components/general/MainWrapper.vue";
+import MainWrapperVue from "/src/components/general/MainWrapper.vue";
 // 全部：-1, 创建中：0, 待审核：1, 审核失败：2, 审核通过：9
 const radioValue = ref(-1);
 const tableData = ref([]);

@@ -55,8 +55,8 @@
 
 <script setup>
 import { handleError, ref, onBeforeMount } from "vue";
-import { editeChannel, addChannel } from "@/api/channel.js";
-import checkSuccess from "@/utils/checkSuccess";
+import { editeChannel, addChannel } from "/src/api/channel.js";
+import checkSuccess from "/src/utils/checkSuccess";
 const prop = defineProps(["title", "currtableData"]);
 const emit = defineEmits(["handleDialogClose"]);
 // 对话框显示

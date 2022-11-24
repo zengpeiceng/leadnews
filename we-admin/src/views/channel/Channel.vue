@@ -138,6 +138,11 @@
               >
             </template>
           </el-table-column>
+          <template #empty>
+            <div>
+              <img src="/src/assets/img/empty/img_nodata@2x.26d7c6a.png" alt="" />
+            </div>
+          </template>
         </el-table>
       </div>
       <template v-if="showDialog">
@@ -171,8 +176,8 @@ import {
   queryChannel,
   deleteChannelById,
   editeChannel,
-} from "@/api/channel.js";
-import MainWrapperVue from "@/components/general/MainWrapper.vue";
+} from "/src/api/channel.js";
+import MainWrapperVue from "/src/components/general/MainWrapper.vue";
 import AddChannel from "./c-cpn/AddChannel.vue";
 
 // --------------- data --------------------
@@ -212,9 +217,12 @@ watch(
 
 // --------------- 请求方法 ------------------
 const queryChannelFunc = async (data) => {
+  if(data.status === -1) {
+    delete data.status
+  }
   const result = await queryChannel(data);
-  tableData.value = result?.data?.data?.data;
-  total.value = result?.data?.data?.total;
+  tableData.value = result?.data
+  total.value = result?.total
 };
 
 // -------------- 事件 ------------------

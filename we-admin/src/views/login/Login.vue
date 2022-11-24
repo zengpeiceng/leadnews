@@ -46,7 +46,7 @@
 
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import { login } from '@/api/login/login.js'
+import { login } from '/src/api/login/login.js'
 import { useRouter } from "vue-router";
 import { ElMessage } from 'element-plus';
 const router = useRouter()
@@ -89,7 +89,7 @@ const judeg = (prop, isValid, message) => {
 const loginin = async () => {
   try{
     const res = await login(ruleForm)
-    const token = res.data.data.token
+    const token = res.data.token;
     window.localStorage.setItem('token',token)
     router.push('/')
   }catch(err){
