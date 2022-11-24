@@ -12,22 +12,22 @@ export function queryChannel(data) {
 export function editeChannel(data) {
   return request({
     method: "PUT",
-    url: "/admin/api/v1/channel/update",
+    url: "/channel_update",
     data
   })
 }
 // 删除
 export function deleteChannelById(id) {
   return request({
-    method: "GET",
-    url: `/admin/api/v1/channel/deleteById${id}`
+    method: "DELETE",
+    url: `channel/deleteById/${id}`
   })
 }
 // 新增
 export function addChannel(data) {
   return request({
     method: "POST",
-    url: "/admin/api/v1/channel/save",
+    url: "/channel/create",
     data
   })
 }

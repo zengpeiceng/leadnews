@@ -116,7 +116,7 @@
               <el-link
                 type="success"
                 :underline="false"
-                :disabled="scope.row.status === true"
+                :disabled="scope.row.status === 1"
                 href="javascript:;"
                 @click="opreteClick('启用', scope.row)"
                 >启用</el-link
@@ -124,7 +124,7 @@
               <el-link
                 type="warning"
                 :underline="false"
-                :disabled="scope.row.status === false"
+                :disabled="scope.row.status === 0"
                 href="javascript:;"
                 @click="opreteClick('禁用', scope.row)"
                 >禁用</el-link
@@ -236,7 +236,7 @@ const opreteClick = async (operate, data) => {
       break;
     case "启用":
       const data1 = {...data}
-      data1.status = true
+      data1.status = 1
       const res1 = await editeChannel(data1);
       // 操作结果提示
       checkSuccess(res1);
@@ -245,7 +245,7 @@ const opreteClick = async (operate, data) => {
       break;
     case "禁用":
       const data2 = {...data};
-      data2.status = false
+      data2.status = 0
       const res = await editeChannel(data2);
       // 操作结果提示
       checkSuccess(res);

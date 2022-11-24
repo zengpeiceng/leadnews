@@ -24,8 +24,8 @@
       </el-form-item>
       <el-form-item label="是否启动：">
         <el-radio-group v-model="channelData.status">
-          <el-radio :label="true">启动</el-radio>
-          <el-radio :label="false">禁用</el-radio>
+          <el-radio :label="1">启动</el-radio>
+          <el-radio :label="0">禁用</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item label="排序方式：">
@@ -65,7 +65,7 @@ let showDialog = ref(true);
 const channelData = ref({
   name: "",
   description: "",
-  status: true,
+  status: 1,
   ord: 1,
 });
 // 表单校验
