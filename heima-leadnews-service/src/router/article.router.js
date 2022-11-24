@@ -9,7 +9,8 @@ const {
   getArticles,
   delArticle,
   changeArticleEnable,
-  showArticleRelativeMsg
+  showArticleRelativeMsg,
+  showArticleDetail
 } = require("../controller/article.controller");
 
 // 发表文章
@@ -31,4 +32,6 @@ articleRouter.post("wemedia/article/down_or_up", verifyAuth, changeArticleEnable
 
 // admin
 articleRouter.post("weadmin/article/list", verifyAuth, showArticleRelativeMsg)
+articleRouter.get("weadmin/article/one/:id", verifyAuth, showArticleDetail)
+
 module.exports = articleRouter;

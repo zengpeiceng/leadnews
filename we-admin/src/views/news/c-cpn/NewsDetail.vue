@@ -18,14 +18,11 @@
       <el-row>
         <el-col :span="8">{{ data.title }}</el-col>
         <el-col :span="8">{{ data.authorName }}</el-col>
-        <el-col :span="8">{{ formatTime(data.submitedTime) }}</el-col>
+        <el-col :span="8">{{ formatTime(data.publishTime) }}</el-col>
       </el-row>
       <div class="content">
         <div class="title">正文信息</div>
-        <div v-for="item in JSON.parse(data.content)">
-          <p v-if="item.type === 'text'" style="margin: 10px 0;">{{ item.value }}</p>
-          <el-image v-else :src="item.value"></el-image>
-        </div>
+        <span v-html="data.content"></span>
       </div>
     </template>
   </MainWrapperVue>
@@ -34,28 +31,19 @@
 <script setup>
 import MainWrapperVue from "/src/components/general/MainWrapper.vue";
 import { ref, onBeforeMount } from "vue";
+import { useRoute } from "vue-router";
+import { getArticlesById } from "/src/api/article.js";
 import formatTime from "/src/utils/formatTime.js";
-let data = ref(null);
-onBeforeMount(() => {
-  data.value = {
-    id: 6468,
-    userId: 1102,
-    title: "文章发布体验1",
-    content:
-      '[{"type":"text","value":"焊接速度加快v\\n"},{"type":"image","value":"http://heima-fastdfs.itheima.net/group1/M00/00/03/wKgCIWDoHVmAfA3NAATzoW3WmPA.02cf5e"}]',
-    type: 1,
-    channelId: 1,
-    labels: "后即可",
-    createdTime: "2022-11-05T07:32:31.000+0000",
-    submitedTime: "2022-11-05T07:32:31.000+0000",
-    status: 9,
-    publishTime: "2022-11-05T07:32:27.000+0000",
-    reason: "已发布",
-    articleId: 1588802042283974700,
-    images: "group1/M00/00/03/wKgCIWDoHVmAfA3NAATzoW3WmPA.02cf5e",
-    enable: 1,
-    authorName: "admin",
-  };
+
+const route = useRoute();
+let data = ref({
+  content: []
+});
+
+onBeforeMount(async () => {
+  const id = route.query.id;
+  const res = await getArticlesById(id);
+  data.value = res.data
 });
 </script>
 
@@ -94,6 +82,10 @@ onBeforeMount(() => {
   .content {
     margin: 20px 0;
     font-size: 14px;
+    img {
+      width: 200px;
+      height: 200px;
+    }
   }
 }
 :deep(.footer) {

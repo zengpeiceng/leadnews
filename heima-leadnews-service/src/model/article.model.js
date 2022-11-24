@@ -2,7 +2,6 @@ const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../app/db");
 const User = require("./user.model");
 const Channel = require("./channel.model");
-const ArticleCover = require("./article_cover.model");
 
 class Article extends Model{};
 Article.init({
@@ -46,6 +45,10 @@ Article.init({
   enable: {
     type: DataTypes.INTEGER,
     defaultValue: 1
+  },
+  createdTime: {
+    type: DataTypes.DATE,
+    defaultValue: Date.now()
   }
 }, {
   sequelize,

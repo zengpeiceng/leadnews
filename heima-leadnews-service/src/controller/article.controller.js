@@ -2,6 +2,7 @@ const ArticleDao = require("../dao/article.dao");
 const ArticleCoverDao = require("../dao/article_cover.dao");
 const { success } = require("../app/response");
 class ArticleController {
+  // media端
   // 上传文章
   async submitArticle(ctx, next) {
     const userId = ctx.user.id;
@@ -87,11 +88,35 @@ class ArticleController {
     const res = await ArticleDao.changeArticleEnable(id, enable);
     success(ctx, "SUCCESS", "操作成功", 200, null);
   }
-  // admin端article列表
+  // admin 
+  // article列表
   async showArticleRelativeMsg(ctx, next) {
     const res = await ArticleDao.showArticleRelativeMsg(ctx.request.body);
-    const total = res.total
-    success(ctx, res, "SUCCESS", 200, null, total);
+    const total = res.total;
+    const data = res.data.map((item) => {
+      const imgs = item.dataValues.images.map((i) => {
+        return i?.url;
+      });
+      item.dataValues.images = imgs;
+      // 处理autherName
+      const authorName = item.dataValues?.author?.dataValues?.name;
+      item.dataValues.authorName = authorName;
+      delete item.dataValues.author;
+      return item.dataValues;
+    });
+    success(ctx, data, "SUCCESS", 200, null, total);
+  }
+  async showArticleDetail(ctx, next) {
+    const id = ctx.request.params?.id;
+    const res = await ArticleDao.showArticleDetail(id);
+    const imgs = res.images.map(i => {
+      return i?.url
+    })
+    res.images = imgs;
+    const authorName = res?.author?.dataValues?.name;
+    res.authorName = authorName;
+    delete res.author;
+    success(ctx, res, "SUCCESS", 200, null)
   }
 }
 

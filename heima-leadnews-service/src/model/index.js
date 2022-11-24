@@ -10,7 +10,8 @@ User.hasMany(Article, {
   onUpdate: "CASCADE",
 })
 Article.belongsTo(User, {
-  foreignKey: "userId"
+  foreignKey: "userId",
+  as: "author",
 })
 
 User.hasMany(Material, {
@@ -28,7 +29,9 @@ Article.hasMany(ArticleCover, {
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 })
-ArticleCover.belongsTo(Article)
+ArticleCover.belongsTo(Article, {
+  foreignKey: "articleId"
+})
 Channel.hasMany(Article, {
   foreignKey: "channelId",
   onDelete: "CASCADE",

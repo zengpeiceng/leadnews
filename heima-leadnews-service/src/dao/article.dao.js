@@ -118,9 +118,14 @@ class ArticleDao {
     return res;
   }
   async showArticleRelativeMsg(data) {
-    const { page, size, userId, title, status } = data;
+    const { page, size, title, status } = data;
     delete data.userId, page, size;
-    let statement = null;
+    let statement = {};
+    if(!status) {
+      statement.status = {
+        [Op.ne]: "0",
+      }
+    }
     if (title) {
       statement.title = {
         [Op.like]: `%${title}%`,
@@ -129,26 +134,50 @@ class ArticleDao {
     if (status) {
       statement.status = status;
     }
-    console.log(statement);
-    const { rows, total } = Article.findAndCountAll({
+    const { rows, count } = await Article.findAndCountAll({
       where: statement,
+      distinct: true,
       include: [
         {
           model: User,
           as: "author",
-          required: false,
-          where: {
-            userId,
-          },
+          attributes: ["name"],
+          required: false
         },
         {
           model: ArticleCover,
           as: "images",
+          attributes: ["url"],
           required: false,
         },
       ],
     });
-    return { data: rows, total };
+    console.log(rows, count);
+    return { data: rows, total: count };
+  }
+  async showArticleDetail(id) {
+    const res = await Article.findOne({
+      where: {
+        id,
+      },
+      include: [
+        {
+          model: ArticleCover,
+          as: "images",
+          raw: true,
+          required: false, // 左外连接
+          attributes: ["url"],
+        },
+        {
+          model: User,
+          as: "author",
+          required: false,
+          attributes: ["name"]
+        }
+      ],
+      distinct: true,
+    });
+    return res.dataValues;
   }
 }
 

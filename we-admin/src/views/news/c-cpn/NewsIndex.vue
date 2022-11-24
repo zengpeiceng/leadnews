@@ -4,12 +4,18 @@
       <el-row :gutter="20" align="middle" justify="start">
         <el-col :span="8">
           <span>搜索内容：</span>
-          <el-input v-model="content" placeholder="输入标题内容"></el-input>
+          <el-input v-model="searchData.title" placeholder="输入标题内容"></el-input>
         </el-col>
         <el-col :span="8">
           <span>审核状态：</span>
-          <el-select v-model="status">
-            <el-option v-for="item in options"> </el-option>
+          <el-select v-model="searchData.title">
+            <el-option label="全部" value=""> </el-option>
+            <el-option label="提交待审核" value="1"> </el-option>
+            <el-option label="审核失败" value="2"> </el-option>
+            <el-option label="待人工审核" value="3"> </el-option>
+            <el-option label="待人工审核通过" value="4"> </el-option>
+            <el-option label="审核通过（待发布）" value="8"> </el-option>
+            <el-option label="已发布" value="9"> </el-option>
           </el-select>
         </el-col>
       </el-row>
@@ -28,6 +34,7 @@
             label="标题"
             min-width="20%"
             align="center"
+            show-overflow-tooltip
           ></el-table-column>
           <el-table-column
             prop="authorName"
@@ -40,12 +47,15 @@
             label="类型"
             align="center"
             min-width="8%"
-          ></el-table-column>
+          >
+            <template #default="scope">{{ getType(scope.row.type) }}</template>
+          </el-table-column>
           <el-table-column
             prop="labels"
             label="标签"
             align="center"
             min-width="8%"
+            show-overflow-tooltip
           ></el-table-column>
           <el-table-column
             prop="createdTime"
@@ -64,7 +74,7 @@
             align="center"
           >
             <template #default="scope">
-              {{ scope.row.reason || "提交（待审核）" }}
+              {{ getStatus(scope.row.status) }}
             </template>
           </el-table-column>
           <el-table-column label="操作" min-width="20%" align="center">
@@ -93,11 +103,14 @@
               </div>
             </template>
           </el-table-column>
+          <template #empty>
+            <img src="/src/assets/img/empty/img_nodata@2x.26d7c6a.png" alt="">
+          </template>
         </el-table>
       </div>
     </template>
     <template #footer>
-      <el-pagination
+      <el-pagination v-if="total > 0"
         v-model:currentPage="currentPage"
         v-model:page-size="pageSize"
         :total="total"
@@ -113,24 +126,65 @@
 
 <script setup>
 import MainWrapperVue from "/src/components/general/MainWrapper.vue";
-import { ref, onBeforeMount } from "vue";
+import { ref, reactive, onBeforeMount, computed, watch } from "vue";
 import { getArticles } from "/src/api/article.js";
 import formatTime from "/src/utils/formatTime.js";
-let content = ref();
-let status = ref();
+
 let currentPage = ref(1);
 let pageSize = ref(10);
 let total = ref(0);
-const options = ref([]);
+
 let tableData = ref([]);
+
+let searchData = reactive({
+  title: "",
+  status: ""
+})
+watch(searchData, async () => {
+  const res = await getArticles({ ...searchData, page: currentPage.value, size: pageSize.value });
+  tableData.value = res.data;
+  total.value = res.total;
+}, {
+  deep: true
+})
+
+const getType = computed(() => {
+  return (type) => {
+    switch (type) {
+      case "1":
+        return "单图";
+      case "3":
+        return "三图";
+      case "0":
+      case "-1":
+        return "无图";
+    }
+  };
+});
+const getStatus = computed(() => {
+  return (status) => {
+    switch (status) {
+      case 1:
+        return "提交（待审核）";
+      case 2:
+        return "审核失败";
+      case 3:
+        return "待人工审核";
+      case 4:
+        return "审核通过（待发布）"
+      case 9:
+        return "已发布";
+    }
+  };
+});
+
 const handleSizeChange = (val) => {};
 const handleCurrentChange = (val) => {};
+
 onBeforeMount(async () => {
   const res = await getArticles({ page: 1, size: 10 });
-  console.log(res);
-  // tableData.value = [
-  // ];
-  // total.value = 10;
+  tableData.value = res.data;
+  total.value = res.total;
 
   currentPage.value = 1;
 });
