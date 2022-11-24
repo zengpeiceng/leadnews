@@ -65,9 +65,7 @@
           </div>
           <div class="edit" v-else>
             <el-icon
-              v-if="
-                judgeStatus(item.status, item.enable, item.type) === '已下架'
-              "
+              v-if="judgeStatus(item.status, item.enable) === '已下架'"
               @click="changeArticleStatus(item.id)"
             >
               <el-icon @click="changeArticleStatus(item.id)"
@@ -83,12 +81,14 @@
             <div class="desc">
               <span class="time">{{ formatTime(item.publishTime) }}</span>
               <span
-                v-if="item.reason"
-                :class="getClassObj(item.status, item.enable, item.type)"
+                v-if="item.reason && item.status != 2"
+                :class="
+                  item.reason == '已发表' ? 'reason publish' : 'reason audit'
+                "
                 >{{ item.reason }}</span
               >
-              <span :class="getClassObj(item.status, item.enable, item.type)">{{
-                getOtherMessage(item.status, item.enable, item.type)
+              <span :class="getClassObj(item.status, item.enable)">{{
+                getOtherMessage(item.status, item.enable)
               }}</span>
             </div>
           </div>
@@ -162,26 +162,26 @@ const getContentlistFunc = async () => {
   total.value = res.total;
 };
 // 判断状态
-const judgeStatus = (status, enable, type, resource) => {
+const judgeStatus = (status, enable, resource) => {
   let className = "";
   let statusName = "";
   if (status == 0) {
     statusName = "草稿";
     className = "reason draft";
   } else if (status == 9) {
-    if (enable == 1 && type == 1) {
+    if (enable == 1) {
       statusName = "已上架";
       className = "reason audit";
-    } else if (enable == 1 && type == 0) {
+    } else {
       statusName = "已下架";
       className = "reason draft";
-    } else {
-      statusName = "审核未通过";
-      statusName = "reason unaudit";
     }
   } else if (status == 1) {
     statusName = "待审核";
     className = "reason audit";
+  } else {
+    statusName = "审核未通过";
+    className = "reason unaudit";
   }
   if (resource == 1) {
     return className;
@@ -191,17 +191,17 @@ const judgeStatus = (status, enable, type, resource) => {
 };
 // 获取文章状态样式
 const getClassObj = computed(() => {
-  return (status, enable, type) => judgeStatus(status, enable, type, 1);
+  return (status, enable) => judgeStatus(status, enable, 1);
 });
 // 获取文章状态
 const getOtherMessage = computed(() => {
-  return (status, enable, type) => judgeStatus(status, enable, type, 0);
+  return (status, enable) => judgeStatus(status, enable, 0);
   /**
-   * 已发布 已下架：type 0   enable 0 status 9
-   * 草稿：         type 0  enable 1 status 0
-   * 已发布 已上架：type 1   enable 1 status 9
-   * 审核未通过：   type 1   enable 0 status 9
-   * 待审核：       type 1   enable 1  status 1
+   * 已发布 已下架：  enable 0 status 9
+   * 草稿：           enable 1 status 0
+   * 已发布 已上架：   enable 1 status 9
+   * 审核未通过：      enable 0 status 2
+   * 待审核：          enable 1  status 1
    */
 });
 // 页码变化
@@ -231,7 +231,9 @@ const editAritcle = (id) => {
   router.push(`/article?id=${id}`);
 };
 
-const changeArticleStatus = (id) => {};
+const changeArticleStatus = (id) => {
+  
+};
 
 onBeforeMount(async () => {
   // 频道
