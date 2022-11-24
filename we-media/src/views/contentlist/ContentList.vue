@@ -41,57 +41,61 @@
         </el-col>
       </template>
       <template #main>
-        <el-card
-          v-for="(item, index) in contentlist"
-          @mouseenter="showEditIcon($event, index)"
-          @mouseleave="hiddenEditIcon($event, index)"
-          :key="item.id"
-        >
-          <el-image :src="item.images[0]" alt="">
-            <template #error>
-              <img
-                class="image-slot"
-                src="/src/assets/img/error/pic_nopic.6de7db9.png"
-              />
-            </template>
-          </el-image>
-          <div class="edit" v-if="item.status != 9">
-            <el-icon size="20" @click="editAritcle(item.id)">
-              <i-ep-Edit />
-            </el-icon>
-            <el-icon size="20" @click="deleteAritcle(item.id)">
-              <i-ep-Delete />
-            </el-icon>
-          </div>
-          <div class="edit" v-else>
-            <el-icon
-              v-if="judgeStatus(item.status, item.enable) === '已下架'"
-              @click="changeArticleEnable(item.id, 1)"
-            >
-              <el-icon><i-ep-Upload
-              /></el-icon>
-            </el-icon>
-            <el-icon v-else @click="changeArticleEnable(item.id, 0)">
-              <el-icon><i-ep-Download /></el-icon>
-            </el-icon>
-          </div>
-          <div style="padding: 10px 16px 0 17px">
-            <p class="title">{{ item.title }}</p>
-            <div class="desc">
-              <span class="time">{{ formatTime(item.publishTime) }}</span>
-              <span
-                v-if="item.reason && item.status != 2"
-                :class="
-                  item.reason == '已发表' ? 'reason publish' : 'reason audit'
-                "
-                >{{ item.reason }}</span
-              >
-              <span :class="getClassObj(item.status, item.enable)">{{
-                getOtherMessage(item.status, item.enable)
-              }}</span>
+        <div v-if="contentlist.length > 0" class="card">
+          <el-card
+            v-for="(item, index) in contentlist"
+            @mouseenter="showEditIcon($event, index)"
+            @mouseleave="hiddenEditIcon($event, index)"
+            :key="item.id"
+          >
+            <el-image :src="item.images[0]" alt="">
+              <template #error>
+                <img
+                  class="image-slot"
+                  src="/src/assets/img/error/pic_nopic.6de7db9.png"
+                />
+              </template>
+            </el-image>
+            <div class="edit" v-if="item.status != 9">
+              <el-icon size="20" @click="editAritcle(item.id)">
+                <i-ep-Edit />
+              </el-icon>
+              <el-icon size="20" @click="deleteAritcle(item.id)">
+                <i-ep-Delete />
+              </el-icon>
             </div>
-          </div>
-        </el-card>
+            <div class="edit" v-else>
+              <el-icon
+                v-if="judgeStatus(item.status, item.enable) === '已下架'"
+                @click="changeArticleEnable(item.id, 1)"
+              >
+                <el-icon><i-ep-Upload /></el-icon>
+              </el-icon>
+              <el-icon v-else @click="changeArticleEnable(item.id, 0)">
+                <el-icon><i-ep-Download /></el-icon>
+              </el-icon>
+            </div>
+            <div style="padding: 10px 16px 0 17px">
+              <p class="title">{{ item.title }}</p>
+              <div class="desc">
+                <span class="time">{{ formatTime(item.publishTime) }}</span>
+                <span
+                  v-if="item.reason && item.status != 2"
+                  :class="
+                    item.reason == '已发表' ? 'reason publish' : 'reason audit'
+                  "
+                  >{{ item.reason }}</span
+                >
+                <span :class="getClassObj(item.status, item.enable)">{{
+                  getOtherMessage(item.status, item.enable)
+                }}</span>
+              </div>
+            </div>
+          </el-card>
+        </div>
+        <div v-else style="text-align: center; width: 100%">
+          <img src="/src/assets/img/error/img_nodata@2x.26d7c6a.png" alt="" />
+        </div>
       </template>
       <template #footer>
         <PageBox :total="total" @pageChange="handlePageChange" />
@@ -279,8 +283,10 @@ onBeforeMount(async () => {
   }
   :deep(.main) {
     padding: 0 0 40px 30px;
-    display: flex;
-    flex-wrap: wrap;
+    .card {
+      display: flex;
+      flex-wrap: wrap;
+    }
     .el-card {
       width: 230px;
       height: 240px;

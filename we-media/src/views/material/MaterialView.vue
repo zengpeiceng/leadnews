@@ -51,36 +51,46 @@
       </div>
     </template>
     <template #main>
-      <div class="center" v-show="!isCollection">
-        <el-card shadow="always" v-for="item in materialAll">
-          <img :src="item.url" class="all" />
-          <div class="operate">
-            <div
-              style="cursor: pointer"
-              @click="toCollect(item.id)"
-              v-show="!item.isCollection"
-            >
-              <el-icon><i-ep-Star /></el-icon>
-              <span>收藏</span>
+      <div v-show="!isCollection">
+        <div class="center" v-if="materialAll.length > 0">
+          <el-card shadow="always" v-for="item in materialAll">
+            <img :src="item.url" class="all" />
+            <div class="operate">
+              <div
+                style="cursor: pointer"
+                @click="toCollect(item.id)"
+                v-show="!item.isCollection"
+              >
+                <el-icon><i-ep-Star /></el-icon>
+                <span>收藏</span>
+              </div>
+              <div
+                style="cursor: pointer"
+                @click="toCancelCollect(item.id)"
+                v-show="item.isCollection"
+              >
+                <el-icon><i-ep-StarFilled /></el-icon>
+                <span>已收藏</span>
+              </div>
+              <div style="cursor: pointer" @click="toDelete(item.id)">
+                <el-icon><i-ep-Delete /></el-icon><span>删除</span>
+              </div>
             </div>
-            <div
-              style="cursor: pointer"
-              @click="toCancelCollect(item.id)"
-              v-show="item.isCollection"
-            >
-              <el-icon><i-ep-StarFilled /></el-icon>
-              <span>已收藏</span>
-            </div>
-            <div style="cursor: pointer" @click="toDelete(item.id)">
-              <el-icon><i-ep-Delete /></el-icon><span>删除</span>
-            </div>
-          </div>
-        </el-card>
+          </el-card>
+        </div>
+        <div v-else style="text-align: center; width: 100%">
+          <img src="/src/assets/img/error/img_nodata@2x.26d7c6a.png" alt="" />
+        </div>
       </div>
-      <div class="center" v-show="isCollection">
-        <el-card shadow="always" v-for="item in materialCollecton">
-          <img :src="item.url" class="collection" />
-        </el-card>
+      <div v-show="isCollection">
+        <div class="center" v-if="materialCollecton.length > 0">
+          <el-card shadow="always" v-for="item in materialCollecton">
+            <img :src="item.url" class="collection" />
+          </el-card>
+        </div>
+        <div v-else style="text-align: center; width: 100%">
+          <img src="/src/assets/img/error/img_nodata@2x.26d7c6a.png" alt="" />
+        </div>
       </div>
     </template>
     <template #footer>
@@ -197,7 +207,7 @@ const toCancelCollect = async (id) => {
 // 删除素材
 const toDelete = async (id) => {
   const result = await deleteMaterial(id);
-  toolTips(result, () => {  
+  toolTips(result, () => {
     updateMaterial({
       isCollection: isCollection.value,
       page: page.value,
