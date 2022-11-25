@@ -2,7 +2,7 @@
   <div id="article-view">
     <MainFrameVue>
       <template #main>
-        <el-form :model="formData" :rules="rules">
+        <el-form :model="formData" :rules="rules" ref="articleForm">
           <el-form-item prop="title" class="title">
             <el-input
               v-model="formData.title"
@@ -58,7 +58,7 @@
                   <el-date-picker
                     placeholder="请选择日期"
                     v-model="formData.publishTime"
-                    :picker-options="pickerOptions"
+                    :disabled-date="disabledDate"
                   ></el-date-picker>
                 </el-form-item>
               </el-col>
@@ -120,7 +120,7 @@
         </el-form>
       </template>
       <template #footer>
-        <el-button @click="submitForm(0)">
+        <el-button @click="submitForm(0, articleForm)">
           <i style="padding-right: 5px">
             <svg class="icon" viewBox="0 0 1024 1024" width="14" height="14">
               <path
@@ -130,7 +130,7 @@
           </i>
           <span>存入草稿</span>
         </el-button>
-        <el-button type="primary" @click="submitForm(1)">
+        <el-button type="primary" @click="submitForm(1, articleForm)">
           <i class="el-icon-upload2"></i>
           <span>提交审核</span>
         </el-button>
@@ -151,16 +151,27 @@ import toolTips from "/src/hook/toolTips.js";
 
 const router = useRouter();
 const route = useRoute();
+const articleForm = ref();
 
 let channels = ref([]); // 频道列表
 
-let pickerOptions = ref({
-  // 只能选今天及以后
-  disabledDate(time) {
-    return time.getTime() < Date.now() - 8.64e7;
-  },
-});
-const rules = ref({
+// 只能选今天及以后
+const disabledDate = (time) => {
+  return time.getTime() < Date.now() - 8.64e7;
+};
+const validateimages = (rule, value, callback) => {
+  // 选择无图/自动
+  if (formData.value.type != "-1" && formData.value.type != "0") {
+    // 选择三图而未上传三张图
+    if (formData.value.type === "3" && value.length < 3) {
+      callback(new Error("文章封面未设置"));
+    } else if (value.length === 0) {
+      // 选择单图，未上传图片
+      callback(new Error("文章封面未设置"));
+    } else callback();
+  } else callback();
+};
+const rules = reactive({
   title: {
     required: true,
     min: 4,
@@ -179,7 +190,7 @@ const rules = ref({
     message: "请选择日期时间",
     trigger: "change",
   },
-  // images: { validator: validateimages },
+  images: { validator: validateimages },
 });
 let formData = ref({
   title: "", // 标题
@@ -229,15 +240,26 @@ const selectCover = (i) => {
   currCover.value = i;
 };
 // 提交表单
-const submitForm = async (operate) => {
-  switch(formData.value.type) {
-    case "1": formData.value.images.splice(1, 2);break;
-    case "0":
-    case "-1": formData.value.images = [];break;
-  }
-  const result = await publishArticle(operate, formData.value);
-  toolTips(result, () => {
-    router.push("/contentlist");
+const submitForm = async (operate, articleForm) => {
+  if (!articleForm) return;
+  await articleForm.validate(async (valid, fields) => {
+    if (valid) {
+      switch (formData.value.type) {
+        case "1":
+          formData.value.images.splice(1, 2);
+          break;
+        case "0":
+        case "-1":
+          formData.value.images = [];
+          break;
+      }
+      const result = await publishArticle(operate, formData.value);
+      toolTips(result, () => {
+        router.push("/contentlist");
+      });
+    } else {
+      console.log("error submit!", fields);
+    }
   });
 };
 // 获取频道列表 / query
