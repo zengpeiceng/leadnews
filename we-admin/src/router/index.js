@@ -60,6 +60,7 @@ const router = createRouter({
             },
             {
               path: "/news-published/detail",
+              name: "newsDetails",
               component: () => import("/src/views/news-published/c-cpn/NewsPublishedDetail.vue"),
               meta: {activeMenu: '/news-published/index'},
             }

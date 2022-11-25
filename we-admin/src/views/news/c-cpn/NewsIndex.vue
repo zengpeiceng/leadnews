@@ -65,7 +65,7 @@
             min-width="11%"
           >
             <template #default="scope">
-              {{ formatTime(scope.row.createdTime) }}
+              {{ formatTime(scope.row.publishTime) }}
             </template>
           </el-table-column>
           <el-table-column

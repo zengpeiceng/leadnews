@@ -38,5 +38,5 @@ articleRouter.post("weadmin/article/list", verifyAuth, showArticleRelativeMsg);
 articleRouter.get("weadmin/article/one/:id", verifyAuth, showArticleDetail);
 // 审核
 articleRouter.post("weadmin/article/examine", verifyAuth, toExamine);
-
+articleRouter.post("weadmin/article/down_or_up", verifyAuth, changeArticleEnable);
 module.exports = articleRouter;

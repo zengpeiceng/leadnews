@@ -9,7 +9,7 @@
         <div class="title">文章详情</div>
         <div class="header_status">
           <span>状态：</span>
-          <span class="returnon" v-if="data.status === 9">已上架</span>
+          <span class="returnon" v-if="data.enable == 1">已上架</span>
           <span class="returnout" v-else>已下架</span>
         </div>
       </div>
@@ -25,56 +25,38 @@
           <span> {{data.authorName}} </span>
         </div>
         <div class="header_updata">
-          <span class="titles">更新时间</span>
+          <span class="titles">发布时间</span>
           <span> {{formatTime(data.publishTime)}} </span>
         </div>
       </div>
       <div class="center_content">
         <span class="titles">正文信息</span>
         <div class="content">
-          <p v-html="newconten"></p>
+          <p v-html="data.content"></p>
         </div>
       </div>
     </template>
-    <template #footer> </template>
   </MainWrapperVue>
 </template>
 
 <script setup>
 import MainWrapperVue from "/src/components/general/MainWrapper.vue";
-import { onMounted, onBeforeMount, ref, computed } from "vue";
+import { onBeforeMount, ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import formatTime from "/src/utils/formatTime.js";
+import { getArticlesById } from "../../../api/article";
+import PageBox from "../../../components/page/PageBox.vue";
 const route = useRoute();
 const router = useRouter();
 const back = () => {
   router.back();
 };
-let data = ref(null);
-data.value = {
-    id: 6468,
-    userId: 1102,
-    title: "文章发布体验1",
-    content:
-      '[{\"type\":\"text\",\"value\":\"（观察者网讯）联合国人权理事会第47届会议正在召开中，在美国的唆使下，加拿大日前挑头发起新疆调查，中国代表当场与之展开激烈交锋并在后续连续出击。29日，中国代表团再次点名美英等国，就其严重现代奴役和贩卖人口现象表示严重关切。\"},{\"type\":\"text\",\"value\":\"据中国常驻联合国日内瓦办事处和瑞士其他国际组织代表团网站29日消息，中国代表团在人权理事会第47届会议与贩卖人口问题特别报告员互动对话时发言，全文如下：\"},{\"type\":\"text\",\"value\":\"主席女士：\"},{\"type\":\"text\",\"value\":\"贩卖人口严重侵犯人权，各国应严厉打击，并向受害者提供保护。中国对美国、英国等国存在严重现代奴役和贩卖人口现象表示严重关切。过去5年，每年被贩卖至美国从事强迫劳动的人口多达10万人，其中一半被贩卖到“血汗工厂”或遭受家庭奴役。据报道，2018年约有136,000人被贩卖到英国，不少被贩卖者包括妇女和儿童因交通工具条件恶劣等原因死亡。国际社会应关注美国、英国的贩卖人口问题，敦促其采取有效措施加以解决。\"},{\"type\":\"text\",\"value\":\"中方对特别报告员基于虚假信息和拙劣谎言，对中国无端指责表示坚决反对。希望特别报告员摒弃对中国偏见，以负责任的态度公正、客观履职。\"},{\"type\":\"text\",\"value\":\"谢谢主席女士。\"},{\"type\":\"text\",\"value\":\"中国常驻联合国日内瓦办事处和瑞士其他国际组织代表团网站截图\"},{\"type\":\"text\",\"value\":\"此前一天（6月28日），在与跨国公司和人权问题工作组对话时，中国常驻联合国日内瓦代表团蒋端公使就表示，中方坚决反对美国等以人权为借口，肆意抹黑中国企业，不择手段制裁打压，企图压制中国企业发展，维护美国科技垄断地位和不正当商业利益。\"},{\"type\":\"text\",\"value\":\"美国有关行径明显违反其自我标榜的公平竞争原则。美国自身强迫劳动现象严重。每年被贩卖至美国从事强迫劳动的人员多达10万人，其中一半被贩卖到血汗工厂，或遭受家庭奴役。强迫劳动在美国家政、农业、种植等20多个行业尤为突出。中方敦促人权理事会关注美国强迫劳动问题。\"}]',
-    type: 1,
-    channelId: 1,
-    labels: "后即可",
-    createdTime: "2022-11-05T07:32:31.000+0000",
-    submitedTime: "2022-11-05T07:32:31.000+0000",
-    status: 9,
-    publishTime: "2022-11-05T07:32:27.000+0000",
-    reason: "已发布",
-    articleId: 1588802042283974700,
-    images: "group1/M00/00/03/wKgCIWDoHVmAfA3NAATzoW3WmPA.02cf5e",
-    enable: 1,
-    authorName: "admin",
-  }
-  let jsonp = JSON.parse(data.value.content)
-  let newconten = ''
-  jsonp.forEach(element => {
-    if(element.type === 'text') newconten += `<p>${element.value}</p><br/>` 
-  });
+let data = ref({});
+onBeforeMount(async () => {
+  const id = route.query.id;
+  const res = await getArticlesById(id)
+  data.value = res.data;
+})
 </script>
 
 <style lang="less" scoped>

@@ -54,8 +54,9 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="日期：" prop="publishTime">
+                <el-form-item label="定时：" prop="publishTime">
                   <el-date-picker
+                    type="datetime"
                     placeholder="请选择日期"
                     v-model="formData.publishTime"
                     :disabled-date="disabledDate"

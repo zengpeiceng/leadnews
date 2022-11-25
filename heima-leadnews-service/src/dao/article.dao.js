@@ -118,7 +118,7 @@ class ArticleDao {
     return res;
   }
   async showArticleRelativeMsg(data) {
-    const { page, size, title, status } = data;
+    const { page, size, title, status, enable, beginPubDate, endPubDate } = data;
     delete data.userId, page, size;
     let statement = {};
     if(!status) {
@@ -133,6 +133,17 @@ class ArticleDao {
     }
     if (status) {
       statement.status = status;
+    }
+    if(enable != undefined && enable != null) {
+      statement.enable = {
+        [Op.eq]: enable
+      }
+    }
+    if(beginPubDate && endPubDate) {
+      statement.createdTime = {
+        [Op.gte]: beginPubDate,
+        [Op.lte]: endPubDate
+      }
     }
     const { rows, count } = await Article.findAndCountAll({
       where: statement,

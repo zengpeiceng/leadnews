@@ -1,30 +1,30 @@
 <template>
   <MainWrapperVue>
     <template #header>
-      <el-form
-        ref="ruleFormRef"
-        :model="ruleForm"
-        label-width="120px"
-        class="filter"
-      >
+      <el-form ref="ruleFormRef" :model="searchForm" class="filter">
         <!-- 搜索内容 -->
         <el-form-item label="搜索内容：" class="filter_content">
-          <el-input v-model="ruleForm.search" placeholder="请输入内容标题" />
+          <el-input v-model="searchForm.title" placeholder="请输入内容标题" />
         </el-form-item>
         <!-- 状态 -->
         <el-form-item label="发布状态：" class="filter_status">
-          <el-select v-model="ruleForm.status" placeholder="全部" size="large">
-            <el-option value="无数据" />
+          <el-select
+            v-model="searchForm.enable"
+            placeholder="全部"
+            size="large"
+          >
+            <el-option value="" label="全部" />
+            <el-option value="1" label="已上架" />
+            <el-option value="0" label="已下架" />
           </el-select>
         </el-form-item>
         <!-- 发布时间 -->
         <el-form-item label="发布时间：" class="filter_data">
           <el-date-picker
-            v-model="ruleForm.data"
+            v-model="searchForm.date"
             type="daterange"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
-            :default-value="[new Date(), new Date()]"
           />
         </el-form-item>
       </el-form>
@@ -39,168 +39,137 @@
         highlight-current-row
       >
         <el-table-column type="index" label="序号" min-width="5%" />
-        <el-table-column prop="title" label="标题" min-width="10%" />
-        <el-table-column prop="author" label="作者" min-width="6%" />
-        <el-table-column prop="type" label="类型" min-width="6%" />
-        <el-table-column prop="lable" label="标签" min-width="6%" />
-        <el-table-column prop="pubilecdata" label="发布时间" min-width="6%" />
-        <el-table-column prop="status" label="状态" min-width="6%" />
-        <el-table-column prop="" label="操作" min-width="16%">
+        <el-table-column prop="title" label="标题" min-width="18%" />
+        <el-table-column prop="authorName" label="作者" min-width="8%" />
+        <el-table-column prop="type" label="类型" min-width="8%">
           <template #default="scope">
-            <el-button type="primary" text @click="skip(scope)">查看</el-button>
-            <el-button type="success" text :disabled="true">上架</el-button>
-            <el-button type="danger" text :disabled="false">下架</el-button>
+            {{ getTypeMsg(scope.row.type) }}
           </template>
         </el-table-column>
+
+        <el-table-column prop="labels" label="标签" min-width="8%" />
+        <el-table-column prop="publishTime" label="发布时间" min-width="6%">
+          <template #default="scope">
+            {{ formatTime(scope.row.publishTime) }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="enable" label="状态" min-width="8%">
+          <template #default="scope">
+            {{ scope.row.enable ? "已上架" : "已下架" }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="" label="操作" min-width="16%">
+          <template #default="scope">
+            <el-button type="primary" text @click="skip(scope.row.id)">查看</el-button>
+            <el-button
+              type="success"
+              text
+              :disabled="scope.row.enable != 0"
+              @click="changeEnableFunc(scope.row.id, 1)"
+              >上架</el-button
+            >
+            <el-button
+              type="danger"
+              text
+              :disabled="scope.row.enable != 1"
+              @click="changeEnableFunc(scope.row.id, 0)"
+              >下架</el-button
+            >
+          </template>
+        </el-table-column>
+        <template #empty>
+          <img src="/src/assets/img/empty/img_nodata@2x.26d7c6a.png" alt="" />
+        </template>
       </el-table>
     </template>
     <template #footer>
-      <el-pagination
-        v-model:currentPage="currentPage"
-        v-model:page-size="pageSize"
-        :page-sizes="[10, 20, 30, 40]"
-        small="small"
-        :disabled="false"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="tableData.length"
-      />
+      <PageBoxVue :total="total" @pageChange="handlePageChange" />
     </template>
   </MainWrapperVue>
 </template>
 
 <script setup>
 import MainWrapperVue from "/src/components/general/MainWrapper.vue";
-import { reactive, ref } from "vue";
+import PageBoxVue from "../../../components/page/PageBox.vue";
+import formatTime from "../../../utils/formatTime";
+import { reactive, ref, onBeforeMount, watch, computed } from "vue";
 import { useRouter } from "vue-router";
+import { getArticles, changeEnable } from "/src/api/article.js";
+import chekcSuccess from "/src/utils/checkSuccess.js";
 
-// 表单数据
-const ruleForm = reactive({
-  search: "",
-  status: null,
-  data: null,
+// 搜索字段
+const searchForm = reactive({
+  title: "",
+  enable: null,
+  date: null,
 });
 // 文章跳转
-const router = useRouter()
-const skip = (scope) => {
-  router.push({
-    path: '/news-published/detail',
-    query: {
-      id: scope.row.index
-    }
-  })
-}
+const router = useRouter();
 // 表格数据
-const tableData = reactive([
-  {
-    index: 0,
-    title: "中国代表：严重关切美英等国近5年骇人听闻的贩卖人口问题",
-    author: "admin",
-    type: "单文图片",
-    lable: "爬虫",
-    pubilecdata: "2021-09-13",
-    status: "已上架",
-    kk: 1,
-  },
-  {
-    index: 0,
-    title: "中国代表：严重关切美英等国近5年骇人听闻的贩卖人口问题",
-    author: "admin",
-    type: "单文图片",
-    lable: "爬虫",
-    pubilecdata: "2021-09-13",
-    status: "已上架",
-  },
-  {
-    index: 0,
-    title: "中国代表：严重关切美英等国近5年骇人听闻的贩卖人口问题",
-    author: "admin",
-    type: "单文图片",
-    lable: "爬虫",
-    pubilecdata: "2021-09-13",
-    status: "已上架",
-  },
-  {
-    index: 0,
-    title: "中国代表：严重关切美英等国近5年骇人听闻的贩卖人口问题",
-    author: "admin",
-    type: "单文图片",
-    lable: "爬虫",
-    pubilecdata: "2021-09-13",
-    status: "已上架",
-  },
-  {
-    index: 0,
-    title: "中国代表：严重关切美英等国近5年骇人听闻的贩卖人口问题",
-    author: "admin",
-    type: "单文图片",
-    lable: "爬虫",
-    pubilecdata: "2021-09-13",
-    status: "已上架",
-  },
-  {
-    index: 0,
-    title: "中国代表：严重关切美英等国近5年骇人听闻的贩卖人口问题",
-    author: "admin",
-    type: "单文图片",
-    lable: "爬虫",
-    pubilecdata: "2021-09-13",
-    status: "已上架",
-  },
-  {
-    index: 0,
-    title: "中国代表：严重关切美英等国近5年骇人听闻的贩卖人口问题",
-    author: "admin",
-    type: "单文图片",
-    lable: "爬虫",
-    pubilecdata: "2021-09-13",
-    status: "已上架",
-  },
-  {
-    index: 0,
-    title: "中国代表：严重关切美英等国近5年骇人听闻的贩卖人口问题",
-    author: "admin",
-    type: "单文图片",
-    lable: "爬虫",
-    pubilecdata: "2021-09-13",
-    status: "已上架",
-  },
-  {
-    index: 0,
-    title: "中国代表：严重关切美英等国近5年骇人听闻的贩卖人口问题",
-    author: "admin",
-    type: "单文图片",
-    lable: "爬虫",
-    pubilecdata: "2021-09-13",
-    status: "已上架",
-  },
-  {
-    index: 0,
-    title: "中国代表：严重关切美英等国近5年骇人听闻的贩卖人口问题",
-    author: "admin",
-    type: "单文图片",
-    lable: "爬虫",
-    pubilecdata: "2021-09-13",
-    status: "已上架",
-  },
-]);
-// 分页当前页数
-let currentPage = ref(1)
-// 显示数量
-let pageSize = ref(10)
+let tableData = ref();
+let currentPage = ref(1); // 当前页
+let pageSize = ref(10); // 一页显示数据数量
+let total = ref(0); // 数据总数
+
+watch(searchForm, () => {
+  getNewestArticles();
+});
+const getTypeMsg = computed(() => {
+  return (type) => {
+    switch(type) {
+      case "1": return "单图文章";
+      case "3": return "三图文章";
+      case "0":
+      case "1": return "无图文章"
+    }
+  }
+})
+// 更新数据
+const getNewestArticles = async () => {
+  const res = await getArticles({
+    page: currentPage.value,
+    size: pageSize.value,
+    ...searchForm,
+    status: 9,
+  });
+  tableData.value = res.data;
+  total.value = res.total;
+};
+// 页码更新
+const handlePageChange = ({ page, size }) => {
+  currentPage.value = page;
+  pageSize.value = size;
+  getNewestArticles();
+};
+// 上架/下架
+const changeEnableFunc = async (id, enable) => {
+  const res = await changeEnable({ id, enable });
+  chekcSuccess(res);
+  getNewestArticles();
+};
+// 查看详情
+const skip = (id) => {
+  router.push({
+    path: "/news-published/detail",
+    query: {
+      id
+    }
+  });
+};
+onBeforeMount(async () => {
+  const res = await getArticles({ page: 1, size: 10, status: 9 });
+  tableData.value = res.data;
+  total.value = res.total;
+});
 </script>
 
 <style lang="less" scoped>
 :deep(.header) {
-  padding: 10px 20px;
-  @media screen and (max-width: 1350px) {
-    .el-form-item {
-      flex-flow: column;
-    }
-  }
+  padding-left: 30px;
   .filter {
     display: flex;
     height: 100%;
-    // align-items: center;
     .el-form-item {
       margin: 0 5px;
       align-items: center;
