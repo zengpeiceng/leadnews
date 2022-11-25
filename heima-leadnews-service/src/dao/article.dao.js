@@ -151,6 +151,8 @@ class ArticleDao {
           required: false,
         },
       ],
+      offset: (page - 1) * size,
+      limit: size
     });
     return { data: rows, total: count };
   }
