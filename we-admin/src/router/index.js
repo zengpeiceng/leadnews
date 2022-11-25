@@ -4,7 +4,7 @@ const router = createRouter({
   routes: [
     {
       path: '/login',
-      component: () => import('/src//views/login/Login.vue')
+      component: () => import('/src/views/login/Login.vue')
     },
     {
       path: "/",
@@ -72,6 +72,10 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: "/:path(.*)",
+      component: () => import("/src/components/notfound/NotFound.vue")
+    }
   ],
 });
 

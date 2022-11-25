@@ -47,6 +47,7 @@ declare module '@vue/runtime-core' {
     IEpStarFilled: typeof import('~icons/ep/star-filled')['default']
     IEpUpload: typeof import('~icons/ep/upload')['default']
     MainFrame: typeof import('./components/MainFrame.vue')['default']
+    NotFound: typeof import('./components/NotFound.vue')['default']
     PageBox: typeof import('./components/PageBox.vue')['default']
     Pagenation: typeof import('./components/pagenation.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

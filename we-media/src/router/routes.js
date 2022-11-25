@@ -1,8 +1,8 @@
-import HomeView from '../views/HomeView.vue'
+import HomeView from "../views/HomeView.vue";
 export default [
   {
-    path: '/',
-    name: 'home',
+    path: "/",
+    name: "home",
     redirect: "/graphic/index",
     component: HomeView,
     children: [
@@ -13,21 +13,22 @@ export default [
         children: [
           {
             path: "/graphic/index",
-            component: () => import("/src//views/graphic/c-cpn/GraphicIndex.vue")
+            component: () =>
+              import("/src//views/graphic/c-cpn/GraphicIndex.vue"),
           },
           {
             path: "/graphic/detail",
-            component: () => import("/src/views/graphic/c-cpn/GraphicDetail.vue"),
+            component: () =>
+              import("/src/views/graphic/c-cpn/GraphicDetail.vue"),
             meta: {
-              ativeMenu: "/graphic/index"
-            }
-          }
-
-        ]
+              ativeMenu: "/graphic/index",
+            },
+          },
+        ],
       },
       {
         path: "/article",
-        component: () => import("/src/views/article/ArticleView.vue")
+        component: () => import("/src/views/article/ArticleView.vue"),
       },
       {
         path: "/contentlist",
@@ -35,16 +36,20 @@ export default [
       },
       {
         path: "/material",
-        component: () => import("/src/views/material/MaterialView.vue")
+        component: () => import("/src/views/material/MaterialView.vue"),
       },
       {
         path: "/fans",
-        component: () => import("/src/views/fans/FansView.vue")
-      }
-    ]
+        component: () => import("/src/views/fans/FansView.vue"),
+      },
+    ],
   },
   {
-      path: "/login",
-      component: () => import("/src/views/login/Login.vue")
-  }
-]
+    path: "/login",
+    component: () => import("/src/views/login/Login.vue"),
+  },
+  {
+    path: "/:path(.*)",
+    component: () => import("/src/components/NotFound.vue"),
+  },
+];
