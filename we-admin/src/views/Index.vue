@@ -68,10 +68,12 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, computed } from "vue";
+import { ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import storage from "../utils/localStorage";
 const router = useRouter()
 const route = useRoute();
+
 const activeRoute = computed(() => {
   if(route.meta.activeMenu) 
     return route.meta.activeMenu;
@@ -80,7 +82,7 @@ const activeRoute = computed(() => {
 
 // 退出登录
 const outlogin = () => {
-  window.localStorage.removeItem('token')
+  storage.removeItem('token')
   router.push('/login')
 }
 

@@ -1,4 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
+import storage from "/src/utils/localStorage";
+import store from "../store";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -80,10 +82,10 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const token = window.localStorage.getItem('token')
-  if(to.path === '/login') return next()
-  if(!token) return next('/login')
-  next();
+  if (to.path !== "/login" && !storage.getItem("token")) {
+    store.commit("changeSysDialogStatus", true);
+  } else {
+    next();
+  } 
 });
-
 export default router;

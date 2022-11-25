@@ -49,6 +49,7 @@ import { onMounted, reactive, ref } from "vue";
 import { login } from '/src/api/login/login.js'
 import { useRouter } from "vue-router";
 import { ElMessage } from 'element-plus';
+import storage from "/src/utils/localStorage.js";
 const router = useRouter()
 // 表单信息
 const ruleForm = reactive({
@@ -90,7 +91,7 @@ const loginin = async () => {
   try{
     const res = await login(ruleForm)
     const token = res.data.token;
-    window.localStorage.setItem('token',token)
+    storage.setItem('token',token)
     router.push('/')
   }catch(err){
     ElMessage.error('登录失败！！！')
@@ -152,7 +153,7 @@ const loginin = async () => {
         width: 172px;
         height: 48px;
       }
-      ::v-deep .el-form {
+      :deep(.el-form) {
         margin: 40px auto 0;
         .el-form-item {
           text-align: center;
@@ -178,7 +179,7 @@ const loginin = async () => {
           }
         }
       }
-      ::v-deep .el-checkbox{
+      :deep(.el-checkbox){
         margin-top: 20px;
         .el-checkbox__label{
             font-size: 14px;

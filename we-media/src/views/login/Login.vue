@@ -49,7 +49,7 @@ import { reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import { Login } from "/src/api/login.js";
 import toolTips from "/src/hook/toolTips.js";
-import { setItem } from "/src/hook/localStorage.js";
+import storage from "/src/utils/localStorage.js";
 
 const router = useRouter();
 
@@ -81,7 +81,7 @@ const submitForm = (formEl) => {
     if(valid) {
       const result = await Login(account)
       toolTips(result, () => {
-        setItem('token', result.data.token)
+        storage.setItem('token', result.data.token)
         router.push("/graphic/index");
       });
     }else {

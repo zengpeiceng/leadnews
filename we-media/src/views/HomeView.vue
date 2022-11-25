@@ -84,7 +84,7 @@
 <script setup>
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { removeItem } from "../hook/localStorage";
+import storage from "../utils/localStorage";
 import MainFrameVue from "../components/MainFrame.vue";
 
 const route = useRoute();
@@ -95,7 +95,7 @@ const activeRoute = computed(() => {
 });
 
 const loginOut = () => {
-  removeItem('token');
+  storage.removeItem('token');
   router.push("/login");
 }
 </script>

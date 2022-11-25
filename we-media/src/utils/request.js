@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getItem } from "@/hook/localStorage";
+import storage from "/src/utils/localStorage";
 const instance = axios.create({
   baseURL: "http://localhost:8000/wemedia",
   headers: {
@@ -10,9 +10,11 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    const token = getItem("token")
+    const token = storage.getItem("token")
     if(token) {
       config.headers.Authorization = `Bearer ${token}`
+    }else {
+
     }
     return config;
   },
