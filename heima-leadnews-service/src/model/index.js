@@ -3,6 +3,7 @@ const Article = require("./article.model")
 const ArticleCover = require("./article_cover.model")
 const Material = require("./material.model")
 const Channel = require("./channel.model");
+const Sensitive = require("./sensitive.model");
 
 User.hasMany(Article, {
   foreignKey: "userId",
@@ -46,6 +47,7 @@ module.exports = {
   Article,
   ArticleCover,
   Material,
-  Channel
+  Channel,
+  Sensitive
 }
 
