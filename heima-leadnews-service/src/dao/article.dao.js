@@ -152,7 +152,6 @@ class ArticleDao {
         },
       ],
     });
-    console.log(rows, count);
     return { data: rows, total: count };
   }
   async showArticleDetail(id) {
@@ -178,6 +177,14 @@ class ArticleDao {
       distinct: true,
     });
     return res.dataValues;
+  }
+  async toExamine(id, status) {
+    const res = await Article.update({status}, {
+      where: {
+        id
+      }
+    })
+    return res;
   }
 }
 

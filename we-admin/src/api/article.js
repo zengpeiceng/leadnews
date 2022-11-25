@@ -16,3 +16,11 @@ export function getArticlesById(id) {
     url: `/article/one/${id}`
   })
 }
+
+export function examineArticle(data) {
+  return request({
+    method: "POST",
+    url: `/article/examine`,
+    data
+  })
+}

@@ -88,7 +88,7 @@ class ArticleController {
     const res = await ArticleDao.changeArticleEnable(id, enable);
     success(ctx, "SUCCESS", "操作成功", 200, null);
   }
-  // admin 
+  // admin
   // article列表
   async showArticleRelativeMsg(ctx, next) {
     const res = await ArticleDao.showArticleRelativeMsg(ctx.request.body);
@@ -109,14 +109,19 @@ class ArticleController {
   async showArticleDetail(ctx, next) {
     const id = ctx.request.params?.id;
     const res = await ArticleDao.showArticleDetail(id);
-    const imgs = res.images.map(i => {
-      return i?.url
-    })
+    const imgs = res.images.map((i) => {
+      return i?.url;
+    });
     res.images = imgs;
     const authorName = res?.author?.dataValues?.name;
     res.authorName = authorName;
     delete res.author;
-    success(ctx, res, "SUCCESS", 200, null)
+    success(ctx, res, "SUCCESS", 200, null);
+  }
+  async toExamine(ctx, next) {
+    const { id, status } = ctx.request.body;
+    const res = await ArticleDao.toExamine(id, status);
+    success(ctx, "SUCCESS", "操作成功", 200, null);
   }
 }
 

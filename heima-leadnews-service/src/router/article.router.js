@@ -10,7 +10,8 @@ const {
   delArticle,
   changeArticleEnable,
   showArticleRelativeMsg,
-  showArticleDetail
+  showArticleDetail,
+  toExamine
 } = require("../controller/article.controller");
 
 // 发表文章
@@ -27,11 +28,15 @@ articleRouter.delete(
   delArticle
 );
 // 上架或下架
-articleRouter.post("wemedia/article/down_or_up", verifyAuth, changeArticleEnable)
+articleRouter.post("wemedia/article/down_or_up", verifyAuth, changeArticleEnable);
 
 
 // admin
-articleRouter.post("weadmin/article/list", verifyAuth, showArticleRelativeMsg)
-articleRouter.get("weadmin/article/one/:id", verifyAuth, showArticleDetail)
+// 文章列表（搜索、分页）
+articleRouter.post("weadmin/article/list", verifyAuth, showArticleRelativeMsg);
+// 获取单个文章详情
+articleRouter.get("weadmin/article/one/:id", verifyAuth, showArticleDetail);
+// 审核
+articleRouter.post("weadmin/article/examine", verifyAuth, toExamine);
 
 module.exports = articleRouter;
