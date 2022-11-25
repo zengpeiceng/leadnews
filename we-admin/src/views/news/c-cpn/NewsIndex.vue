@@ -113,23 +113,14 @@
       </div>
     </template>
     <template #footer>
-      <el-pagination
-        v-if="total > 0"
-        v-model:currentPage="currentPage"
-        v-model:page-size="pageSize"
-        :total="total"
-        layout="total, sizes, prev, pager, next, jumper"
-        :page-sizes="[10, 20, 30, 40]"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      >
-      </el-pagination>
+      <PageBoxVue :total="total" @pageChange="handlePageChange"/>
     </template>
   </MainWrapperVue>
 </template>
 
 <script setup>
 import MainWrapperVue from "/src/components/general/MainWrapper.vue";
+import PageBoxVue from "../../../components/page/PageBox.vue";
 import { ref, reactive, onBeforeMount, computed, watch } from "vue";
 import { getArticles, examineArticle } from "/src/api/article.js";
 import checkSuccess from "/src/utils/checkSuccess.js";
@@ -141,10 +132,11 @@ let total = ref(0);
 
 let tableData = ref([]);
 
-let searchData = reactive({
+let searchData = reactive({ // 搜索数据
   title: "",
   status: "",
 });
+// 搜索
 watch(
   searchData,
   async () => {
@@ -177,6 +169,7 @@ const getType = computed(() => {
     }
   };
 });
+// 获取状态信息
 const getStatus = computed(() => {
   return (status) => {
     switch (status) {
@@ -191,7 +184,7 @@ const getStatus = computed(() => {
     }
   };
 });
-
+// 审核 
 const toExamine = async (item, operate) => {
   let status;
   if (operate == 1) {
@@ -203,8 +196,12 @@ const toExamine = async (item, operate) => {
   checkSuccess(res);
   updateData();
 };
-const handleSizeChange = (val) => {};
-const handleCurrentChange = (val) => {};
+// 更新页码
+const handlePageChange = async({page, size}) => {
+  currentPage.value = page;
+  pageSize.value = size;
+  updateData();
+}
 
 onBeforeMount(async () => {
   const res = await getArticles({ page: 1, size: 10 });

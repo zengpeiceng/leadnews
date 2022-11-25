@@ -140,7 +140,10 @@
           </el-table-column>
           <template #empty>
             <div>
-              <img src="/src/assets/img/empty/img_nodata@2x.26d7c6a.png" alt="" />
+              <img
+                src="/src/assets/img/empty/img_nodata@2x.26d7c6a.png"
+                alt=""
+              />
             </div>
           </template>
         </el-table>
@@ -154,16 +157,7 @@
       </template>
     </template>
     <template #footer>
-      <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        :page-sizes="[10, 20, 30, 40]"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="total"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      >
-      </el-pagination>
+      <PageBoxVue :total="total" @pageChange="handlePageChange" />
     </template>
   </MainWrapperVue>
 </template>
@@ -179,6 +173,7 @@ import {
 } from "/src/api/channel.js";
 import MainWrapperVue from "/src/components/general/MainWrapper.vue";
 import AddChannel from "./c-cpn/AddChannel.vue";
+import PageBoxVue from "../../components/page/PageBox.vue";
 
 // --------------- data --------------------
 // 当前选中的option
@@ -217,12 +212,12 @@ watch(
 
 // --------------- 请求方法 ------------------
 const queryChannelFunc = async (data) => {
-  if(data.status === -1) {
-    delete data.status
+  if (data.status === -1) {
+    delete data.status;
   }
   const result = await queryChannel(data);
-  tableData.value = result?.data
-  total.value = result?.total
+  tableData.value = result?.data;
+  total.value = result?.total;
 };
 
 // -------------- 事件 ------------------
@@ -235,8 +230,8 @@ const opreteClick = async (operate, data) => {
       showDialog.value = true;
       break;
     case "启用":
-      const data1 = {...data}
-      data1.status = 1
+      const data1 = { ...data };
+      data1.status = 1;
       const res1 = await editeChannel(data1);
       // 操作结果提示
       checkSuccess(res1);
@@ -244,8 +239,8 @@ const opreteClick = async (operate, data) => {
       queryChannelFunc({ page: currentPage.value, size: pageSize.value });
       break;
     case "禁用":
-      const data2 = {...data};
-      data2.status = 0
+      const data2 = { ...data };
+      data2.status = 0;
       const res = await editeChannel(data2);
       // 操作结果提示
       checkSuccess(res);
@@ -272,22 +267,18 @@ const opreteClick = async (operate, data) => {
 const handleCurrChange = (newRow) => {
   console.log(newRow);
 };
-// 当前页变化
-const handleCurrentChange = (val) => {
-  currentPage.value = val;
-  queryChannelFunc({ page: val, size: pageSize.value });
-};
-// 	每页条数变化
-const handleSizeChange = (val) => {
-  pageSize.value = val;
-  queryChannelFunc({ page: currentPage.value, size: val });
+// 页码变化 
+const handlePageChange = async ({ page, size }) => {
+  currentPage.value = page;
+  pageSize.value = size;
+  queryChannelFunc({page: currentPage.value, size: pageSize.value, ...accountState.value})
 };
 const handleDialogClose = () => {
   showDialog.value = false;
   queryChannelFunc({
     page: currentPage.value,
     size: pageSize.value,
-  });
+ });
 };
 onBeforeMount(() => {
   // 请求数据

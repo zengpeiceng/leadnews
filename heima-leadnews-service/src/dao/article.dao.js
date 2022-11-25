@@ -30,7 +30,7 @@ class ArticleDao {
   }
   // 获取文章
   async getArticles(data) {
-    const offset = data.page - 1,
+    const offset = (data.page - 1) * data.size,
       limit = data.size;
 
     const statement = { ...data };
