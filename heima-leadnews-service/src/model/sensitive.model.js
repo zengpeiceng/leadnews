@@ -8,11 +8,11 @@ Sensitive.init({
     primaryKey: true,
     autoIncrement: true,
   },
-  sensitive: {
+  name: {
     type: DataTypes.STRING,
     allowNull: false
   },
-  createTime: {
+  createdTime: {
     type: DataTypes.DATE,
     defaultValue: Date.now()
   }

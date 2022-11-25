@@ -4,7 +4,7 @@
       <div class="server_add">
         <el-form :model="formone">
           <el-form-item label="敏感词：">
-            <el-input v-model="formone.serveword" placeholder="请输入敏感词" />
+            <el-input v-model="formone.name" placeholder="请输入敏感词" />
           </el-form-item>
         </el-form>
         <el-button type="primary" class="addword" @click="opendig('新增')">
@@ -18,16 +18,16 @@
       <el-dialog
         class="dialog"
         v-model="dialogVisible"
-        :title="titel + '敏感词'"
+        :title="title + '敏感词'"
         width="440px"
         @close="handleClose"
       >
         <el-form :model="subformone" :rules="rules">
-          <el-form-item label="敏感词：" prop="serveword" ref="formadd">
+          <el-form-item label="敏感词：" prop="name" ref="formadd">
             <el-input
               maxlength="10"
               show-word-limit
-              v-model="subformone.serveword"
+              v-model="subformone.name"
               placeholder="请输入敏感词"
             />
           </el-form-item>
@@ -35,9 +35,7 @@
         <template #footer>
           <span class="dialog-footer">
             <el-button @click="dialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="dialogVisible = false">
-              确定
-            </el-button>
+            <el-button type="primary" @click="submit"> 确定 </el-button>
           </span>
         </template>
       </el-dialog>
@@ -45,7 +43,7 @@
       <div class="c-t-wrapper">
         <el-table :data="tableData" style="width: 100%" highlight-current-row>
           <el-table-column type="index" label="序号" min-width="16%" />
-          <el-table-column prop="word" label="敏感词" />
+          <el-table-column prop="name" label="敏感词" />
           <el-table-column prop="createdTime" label="创建时间">
             <template #default="scope">
               <span>{{ formatTime(scope.row.createdTime) }}</span>
@@ -56,96 +54,114 @@
               <el-button
                 text
                 type="primary"
-                @click="opendig('编辑', scope.row.id, scope.row.word)"
+                @click="opendig('编辑', scope.row.id, scope.row.name)"
                 >编辑</el-button
               >
-              <el-button text type="danger">删除</el-button>
+              <el-button text type="danger" @click="delSensitive(scope.row.id)">删除</el-button>
             </template>
           </el-table-column>
+          <template #empty>
+            <img src="/src/assets/img/empty/img_nodata@2x.26d7c6a.png" alt="" />
+          </template>
         </el-table>
       </div>
     </template>
-    <template #footer></template>
+    <template #footer>
+      <PageBox :total="total" @pageChange="handlePageChange" />
+    </template>
   </MainWrapperVue>
 </template>
 
 <script setup>
 import MainWrapperVue from "/src/components/general/MainWrapper.vue";
 import formatTime from "/src/utils/formatTime.js";
-import { reactive, ref } from "vue";
+import PageBox from "../../components/page/PageBox.vue";
+import { reactive, ref, onBeforeMount } from "vue";
+import { getSensitives, updateSensitive, addSensitive, deleteSensitive } from "/src/api/sensitive.js";
+import checkSuccess from "/src/utils/checkSuccess.js";
 
 const formadd = ref(null);
-
+const title = ref();
 // 敏感词搜索
 let formone = reactive({
-  serveword: "",
+  name: "",
 });
 // 提交的敏感词
 let subformone = reactive({
-  serveword: "",
+  id: "",
+  name: "",
 });
-
 // 对话框显示
 let dialogVisible = ref(false);
-
+watch(
+  formone,
+  () => {
+    getNewest();
+  },
+  {
+    deep: true,
+  }
+);
 // 关闭对话框
 const handleClose = () => {
-  subformone.serveword = "";
+  subformone.name = "";
+  subformone.id = "";
 };
 
 // 打开对话框
-const opendig = (tit, id, word) => {
-  titel.value = tit;
-  if (word) subformone.serveword = word;
+const opendig = (tit, id, name) => {
+  title.value = tit;
+  if (name) subformone.name = name;
+  if (id) subformone.id = id;
   dialogVisible.value = true;
-  formadd.value.clearValidate();
+  formadd.value?.clearValidate();
 };
-
-// 对话框标题
-const titel = ref(null);
-
 // 表单校验
 const rules = reactive({
-  serveword: [{ required: true, message: "请输入", trigger: "change" }],
+  name: [{ required: true, message: "请输入", trigger: "change" }],
 });
 // 数据
-let tableData = reactive([
-  {
-    id: 123,
-    word: "冰毒",
-    createdTime: "2022-11-04T00:35:48.000+0000",
-  },
-  {
-    id: 123,
-    word: "血腥",
-    createdTime: "2022-11-04T00:35:48.000+0000",
-  },
-  {
-    id: 123,
-    word: "冰毒",
-    createdTime: "2022-11-04T00:35:48.000+0000",
-  },
-  {
-    id: 123,
-    word: "冰毒",
-    createdTime: "2022-11-04T00:35:48.000+0000",
-  },
-  {
-    id: 123,
-    word: "冰毒",
-    createdTime: "2022-11-04T00:35:48.000+0000",
-  },
-  {
-    id: 123,
-    word: "冰毒",
-    createdTime: "2022-11-04T00:35:48.000+0000",
-  },
-  {
-    id: 123,
-    word: "冰毒",
-    createdTime: "2022-11-04T00:35:48.000+0000",
-  },
-]);
+let tableData = ref();
+let total = ref();
+let pageSize = ref(10);
+let currentPage = ref(1);
+
+const submit = async () => {
+  const { id, name } = subformone;
+  let res;
+  if (id) {
+    res = await updateSensitive({ id, name });
+  } else {
+    res = await addSensitive({ name });
+  }
+  dialogVisible.value = false;
+  checkSuccess(res);
+  getNewest();
+};
+const delSensitive = async (id) => {
+  const res = await deleteSensitive(id);
+  checkSuccess(res);
+  getNewest();
+}
+const getNewest = async () => {
+  const res = await getSensitives({
+    page: currentPage.value,
+    size: pageSize.value,
+    ...formone,
+  });
+  tableData.value = res.data;
+  total.value = res.total;
+};
+const handlePageChange = ({ page, size }) => {
+  currentPage.value = page;
+  pageSize.value = size;
+  getNewest();
+};
+onBeforeMount(async () => {
+  const res = await getSensitives({ page: 1, size: 10 });
+  tableData.value = res.data;
+  total.value = res.total;
+});
 </script>
 
 <style lang="scss" scoped>
@@ -196,8 +212,5 @@ let tableData = reactive([
       height: 60px;
     }
   }
-}
-:deep(.footer) {
-  display: none;
 }
 </style>
