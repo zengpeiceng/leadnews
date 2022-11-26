@@ -82,3 +82,43 @@
     }
   }
 }
+.c-t-wrapper {
+  clear:left;
+  position: relative;
+  width: calc(100% - 40px);
+  padding: 30px 22px 30px 0;
+  .el-table {
+    .el-table__inner-wrapper::before {
+      height: 0;
+    }
+    thead {
+      color: #000;
+      th.el-table__cell {
+        border: none;
+      }
+    }
+    .el-table__cell {
+      border: none;
+    }
+     // 操作：flex
+    .operateCell .cell {
+      display: flex;
+      justify-content: space-evenly;
+    }
+    tr:hover td.el-table__cell:nth-child(1)::before,
+    .current-row td.el-table__cell:nth-child(1)::before {
+      content: "";
+      position: absolute;
+      display: inline-block;
+      top: 0;
+      left: 0;
+      width: 5px;
+      height: 100%;
+      border-radius: 3px;
+      background-color: #3175fb;
+    }
+    .current-row td {
+      background-color: rgb(245, 247, 250);
+    }
+  }
+}
