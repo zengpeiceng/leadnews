@@ -10,7 +10,11 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (to.path !== "/login" && !storage.getItem("token")) {
-    store.commit("changeSysDialogStatus", true);
+    if(from.path != "/") {
+      store.commit("changeSysDialogStatus", true);
+    } else {
+      next({path: "/login"});
+    }
   } else {
     next();
   } 

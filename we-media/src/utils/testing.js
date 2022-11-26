@@ -2,7 +2,7 @@ import storage from "./localStorage";
 import store from "../store";
 let lastTime = new Date().getTime();
 let currentTime = new Date().getTime();
-let timeout = 1 * 60 * 1000; // 超时时间 15分钟
+let timeout = 15 * 60 * 1000; // 超时时间 15分钟
 
 window.onload = () => {
   window.document.onmousedown = () => {

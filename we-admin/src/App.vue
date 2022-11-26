@@ -1,14 +1,16 @@
 <template>
   <div id="app-wrapper">
-    <el-dialog v-model="dialogVisible" title="温馨提示" width="30%">
-      <span>登录超时，请重新登录</span>
-      <template #footer>
-        <span class="dialog-footer">
-          <el-button @click="cancle">取消</el-button>
-          <el-button type="danger" @click="confirm"> 确定 </el-button>
-        </span>
-      </template>
-    </el-dialog>
+    <div v-if="dialogWrapper">
+      <el-dialog v-model="dialogVisible" title="温馨提示" width="30%">
+        <span>登录超时，请重新登录</span>
+        <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="cancle">取消</el-button>
+            <el-button type="danger" @click="confirm"> 确定 </el-button>
+          </span>
+        </template>
+      </el-dialog>
+    </div>
     <router-view></router-view>
   </div>
 </template>
@@ -20,13 +22,14 @@ import { useStore } from "vuex";
 const store = useStore();
 const router = useRouter();
 
-let dialogVisible = computed(() => store.state.sysDialogShow);
+let dialogVisible = ref(true) 
+let dialogWrapper = computed(() => store.state.sysDialogShow);
 const cancle = () => {
-  store.commit("changeSysDialogStatus", false)
-}
+  store.commit("changeSysDialogStatus", false);
+};
 const confirm = () => {
-  store.commit("changeSysDialogStatus", false)
-  router.push("/login")
+  store.commit("changeSysDialogStatus", false);
+  router.push("/login");
 };
 </script>
 

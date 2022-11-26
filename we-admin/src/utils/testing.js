@@ -2,7 +2,7 @@ import storage from "./localStorage";
 import store from "../store";
 let lastTime = new Date().getTime();
 let currentTime = new Date().getTime();
-let timeout = 1 * 60 * 1000; // 超时时间 15分钟
+let timeout = 15 * 60 * 1000; // 超时时间 15分钟
 
 window.onload = () => {
   window.document.onmousedown = () => {
@@ -17,8 +17,9 @@ function checkTimeout() {
   // 判断是否超时
   if (currentTime - lastTime > timeout) {
     storage.clear();
-    if (window.location.pathname != "/login")
+    if (window.location.pathname != "/login") {
       store.commit("changeSysDialogStatus", true);
+    }
   }
 }
 
